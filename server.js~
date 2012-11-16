@@ -86,7 +86,7 @@ server.get('/500', function(req, res){
 });
 
 //The 404 Route (ALWAYS Keep this as the last route)
-server.get('/*', function(req, res){
+server.get('/vendor/*', function(req, res){
     var filePath = '.' + req.url;
     
     var extname = path.extname(filePath);
