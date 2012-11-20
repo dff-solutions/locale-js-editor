@@ -44,7 +44,7 @@ var jam = {
             "location": "../vendor/jam/",
             "main": "canvas-to-blob.min.js"
         },{
-            "name": "load-image",
+            "name": "load-image.min",
             "location": "../vendor/jam/",
             "main": "load-image.min.js"
         },{

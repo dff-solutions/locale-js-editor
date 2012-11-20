@@ -4,19 +4,30 @@ var connect = require('connect')
     , io = require('socket.io')
     , port = (process.env.PORT || 8081)
     , fs = require('fs')
-    , path = require('path');
+    , path = require('path')
+    , upload = require('jquery-file-upload-middleware')
+    , myFirstFormStrategy= require('./myFirstFormStrategy');
+
+
 
 //Setup Express
 var server = express.createServer();
 server.configure(function(){
     server.set('views', __dirname + '/views');
     server.set('view options', { layout: false });
-    server.use(connect.bodyParser());
+
     server.use(express.cookieParser());
     server.use(express.session({ secret: "shhhhhhhhh!"}));
     server.use(connect.static(__dirname + '/static'));
     server.use(server.router);
+
+    server.auth( myFirstFormStrategy() )
+
+    server.use('/upload', upload({
+                }));
+    server.use(express.bodyParser());
 });
+
 
 //setup the errors
 server.error(function(err, req, res, next){
@@ -62,21 +73,13 @@ io.sockets.on('connection', function(socket){
 /////// ADD ALL YOUR ROUTES HERE  /////////
  
 server.get('/', function(req,res){
-
-   fs.readFile('index.html',function (err, data){
-        res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
-        res.write(data);
-        res.end();
-    });
-
-/*  res.render('index.jade', {
-    locals : { 
-              title : 'Your Page Title'
-             ,description: 'Your Page Description'
-             ,author: 'Your Name'
-             ,analyticssiteid: 'XXXXXXX' 
-            }
-  });*/
+        req.authenticate(['someName'], function(error, authenticated) {
+                   fs.readFile('index.html',function (err, data){
+                        res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
+                        res.write(data);
+                        res.end();
+                    });
+        });
 });
 
 
@@ -86,7 +89,7 @@ server.get('/500', function(req, res){
 });
 
 //The 404 Route (ALWAYS Keep this as the last route)
-server.get('/vendor/*', function(req, res){
+server.get('/*', function(req, res){
     var filePath = '.' + req.url;
     
     var extname = path.extname(filePath);
@@ -115,16 +118,19 @@ server.get('/vendor/*', function(req, res){
             });
         }
         else {
+
+        console.log('---');
+        console.log(req.url);
+        console.log('---');
             res.writeHead(404);
             res.end();
+            //throw new NotFound;
         }
     });
 });
 
-//The 404 Route (ALWAYS Keep this as the last route)
-server.get('/*', function(req, res){
-    throw new NotFound;
-});
+
+
 
 function NotFound(msg){
     this.name = 'NotFound';
