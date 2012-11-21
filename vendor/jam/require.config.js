@@ -41,19 +41,23 @@ var jam = {
             "main": "jquery.fileupload-ui"
         },{
             "name": "canvas-to-blob",
-            "location": "../vendor/jam/",
+            "location": "../vendor/jam",
             "main": "canvas-to-blob.min.js"
         },{
             "name": "load-image",
-            "location": "../vendor/jam/",
+            "location": "../vendor/jam",
             "main": "load-image.min.js"
         },{
             "name": "jquery.ui.widget",
-            "location": "../vendor/jam/",
+            "location": "../vendor/jam",
             "main": "jquery.ui.widget.js"
         },{
             "name": "tmpl.min",
-            "location": "../vendor/jam/",
+            "location": "../vendor/jam",
+            "main": "tmpl.min.js"
+        },{
+            "name": "tmpl",
+            "location": "../vendor/jam",
             "main": "tmpl.min.js"
         }
 

@@ -18,9 +18,9 @@
         // Register as an anonymous AMD module:
         define([
             'jquery',
-            'tmpl',
+            'tmpl.min',
             'load-image',
-            './jquery.fileupload-fp'
+            'jquery.fileupload-fp'
         ], factory);
     } else {
         // Browser globals:

@@ -39,45 +39,7 @@ function(app,LocaleEdit) {
         .render()
         .done(function(){
           
-                $('#fileupload').fileupload({
-                        dataType: 'json',
-                        add: function (e, data) {
-                                $(this).fileupload('process', data).done(function () {
-                                    data.submit();
-                                });
-                            },
-                        maxFileSize: 5000000,
-                                    acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-                                    process: [
-                                        {
-                                            action: 'load',
-                                            fileTypes: /^image\/(gif|jpeg|png)$/,
-                                            maxFileSize: 20000000 // 20MB
-                                        },
-                                        {
-                                            action: 'resize',
-                                            maxWidth: 1440,
-                                            maxHeight: 900
-                                        },
-                                        {
-                                            action: 'save'
-                                        }
-                                    ],
-                        progressall: function (e, data) {
-                                var progress = parseInt(data.loaded / data.total * 100, 10);
-                                $('#progress .bar').css(
-                                    'width',
-                                    progress + '%'
-                                );
-                            },
-                        done: function (e, data) {
-                            /*$.each(data.result, function (index, file) {
-                                $('<p/>').text(file.name).appendTo(document.body);
-                            });*/
-
-                        console.log('done')
-                        }
-                    });
+             LocaleEdit.InitUi();  
         });
     }
   });

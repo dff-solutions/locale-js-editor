@@ -73,13 +73,13 @@ io.sockets.on('connection', function(socket){
 /////// ADD ALL YOUR ROUTES HERE  /////////
  
 server.get('/', function(req,res){
-        req.authenticate(['someName'], function(error, authenticated) {
+        //req.authenticate(['someName'], function(error, authenticated) {
                    fs.readFile('index.html',function (err, data){
                         res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
                         res.write(data);
                         res.end();
                     });
-        });
+        //});
 });
 
 
