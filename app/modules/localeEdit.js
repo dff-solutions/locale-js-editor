@@ -9,7 +9,9 @@ define([
   "tmpl.min",
   "jquery.fileupload",
   "jquery.fileupload-fp",   
-  "jquery.fileupload-ui"
+  "jquery.fileupload-ui",
+  "bootstrap",
+  "bootstrap-image-gallery"
 ],
 
 // Map dependencies from above array.
@@ -32,6 +34,12 @@ function(app, jquery ) {
   Localeedit.Views.Layout = Backbone.Layout.extend({
     template: "localeedit"
   });
+
+  Localeedit.Views.Overview = Backbone.Layout.extend({
+    template: "overview"
+  });  
+
+  
 
   Localeedit.InitUi = function() {
 
@@ -57,7 +65,7 @@ function(app, jquery ) {
         $('#fileupload').fileupload('option', {
             url: 'http://192.168.2.102:8081/upload',
             maxFileSize: 5000000,
-            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            acceptFileTypes: /(\.|\/)(js)$/i,
             process: [
                 {
                     action: 'load',

@@ -9,17 +9,22 @@ function(app,LocaleEdit) {
   // Defining the application router, you can attach sub routers here.
   var Router = Backbone.Router.extend({
     routes: {
-      "": "index"
+      "": "index",
+      "overview": "overview"
     },
 
-    help: function() {
+    overview: function() {
       // Create a layout and associate it with the #main div.
       var layout = new Backbone.Layout({
-        el: "#main"
+        el: "#mainSection"
       });
 
       // Insert the tutorial into the layout.
-      layout.insertView(new LocaleEdit.Views.Layout());
+      layout.insertView(new LocaleEdit.Views.Overview());
+
+
+      layout
+        .render();
 
     },
 

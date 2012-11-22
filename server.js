@@ -24,6 +24,26 @@ server.configure(function(){
     server.use( myFirstFormStrategy() )
 
     server.use('/upload', upload({
+                    uploadUrl: '/node_modules/jquery-file-upload-middleware/public/files',
+                    tmpDir: '/tmp',
+                    maxPostSize: 11000000000, // 11 GB
+                    minFileSize: 1,
+                    maxFileSize: 10000000000, // 10 GB
+                    acceptFileTypes: /.+/i,
+                    // Files not matched by this regular expression force a download dialog,
+                    // to prevent executing any scripts in the context of the service domain:
+                    safeFileTypes: /\.(js)$/i,
+                    imageTypes: /\.(js)$/i,
+                    imageVersions: {
+                        thumbnail: {
+                            width: 80,
+                            height: 80
+                        }
+                    },
+                    accessControl: {
+                        allowOrigin: '*',
+                        allowMethods: 'OPTIONS, HEAD, GET, POST, PUT, DELETE'
+                    }        
                 }));
     server.use(express.bodyParser());
 });
@@ -88,7 +108,38 @@ server.get('/500', function(req, res){
     throw new Error('This is a 500 Error');
 });
 
-//The 404 Route (ALWAYS Keep this as the last route)
+
+server.get('/node_modules/jquery-file-upload-middleware/public/files/*', function(req, res){
+    var filePath = '.' + req.url;
+    
+    var extname = path.extname(filePath);
+     
+    path.exists(filePath, function(exists) {
+     
+        if (exists) {
+            fs.readFile(filePath, function(error, content) {
+                if (error) {
+                    res.writeHead(500);
+                    res.end();
+                }
+                else {
+                    res.writeHead(200, { 'Content-Type':  "image/" + extname });
+                    res.end(content, 'utf-8');
+                }
+            });
+        }
+        else {
+
+        console.log('---');
+        console.log(req.url);
+        console.log('---');
+            res.writeHead(404);
+            res.end();
+            //throw new NotFound;
+        }
+    });
+});
+
 server.get('/*', function(req, res){
     var filePath = '.' + req.url;
     

@@ -59,6 +59,16 @@ var jam = {
             "name": "tmpl",
             "location": "../vendor/jam",
             "main": "tmpl.min.js"
+        },{
+            "name": "bootstrap",
+            "location": "../vendor/jam",
+            "main": "bootstrap.min.js"
+        }
+
+        ,{
+            "name": "bootstrap-image-gallery",
+            "location": "../vendor/jam",
+            "main": "bootstrap-image-gallery.min.js"
         }
 
 

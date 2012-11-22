@@ -5,7 +5,7 @@
 
 </header>
 
-<section>
+<section id="main-section">
 <div class="container">
     <div class="page-header">
         <h1>Locale Edit File Upload</h1>
@@ -62,7 +62,32 @@
         <table role="presentation" class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
     </form>
 </div>
-</section>
+
+<div id="modal-gallery" class="modal modal-gallery hide fade modal-single" data-filter=":odd" tabindex="-1" style="margin-top: -198.5px; margin-left: -212px; display: none;" aria-hidden="true">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">×</a>
+        <h3 class="modal-title" style="width: 380px;">4956964701393152143.png</h3>
+    </div>
+    <div class="modal-body"><div class="modal-image" style="width: 256px; height: 256px;"></div></div>
+    <div class="modal-footer">
+        <a class="btn modal-download" target="_blank" href="http://jquery-file-upload.appspot.com/AMIfv97KssvyLx8w68xxAnuOvCr8Go_EkMYUpdE74LCuX3KPen6bPVxX8_hM5U9nA4Ul5a1WdDhw_hj10CeG2RJnunMKLqmaENBxS2aj9gmnXHk2gEyaglL6C0zkLjYFYV4Ie8bPsjrRBj5t-_gX1fT0P4BrjpzOYg/4956964701393152143.png">
+            <i class="icon-download"></i>
+            <span>Download</span>
+        </a>
+        <a class="btn btn-success modal-play modal-slideshow" data-slideshow="5000" style="display: none;">
+            <i class="icon-play icon-white"></i>
+            <span>Slideshow</span>
+        </a>
+        <a class="btn btn-info modal-prev" style="display: none;">
+            <i class="icon-arrow-left icon-white"></i>
+            <span>Previous</span>
+        </a>
+        <a class="btn btn-primary modal-next" style="display: none;">
+            <span>Next</span>
+            <i class="icon-arrow-right icon-white"></i>
+        </a>
+    </div>
+</div>
 <script id="template-upload" type="text/x-tmpl">
 {% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-upload fade">
@@ -121,3 +146,5 @@
     </tr>
 {% } %}
 </script>
+
+</section>
