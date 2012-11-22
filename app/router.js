@@ -1,53 +1,62 @@
 define([
   // Application.
   "app",
-  "modules/localeEdit"
+  "modules/localeEdit",
+  "jquery"
 ],
 
-function(app,LocaleEdit) {
+function(app,LocaleEdit,jquery) {
 
   // Defining the application router, you can attach sub routers here.
   var Router = Backbone.Router.extend({
     routes: {
       "": "index",
+      "upload": "index",      
       "overview": "overview"
     },
 
     overview: function() {
-      // Create a layout and associate it with the #main div.
-      var layout = new Backbone.Layout({
-        el: "#mainSection"
-      });
+         var collection = new LocaleEdit.Collection();
+            app.useLayout('main').setViews({
+                    // Attach the bar View into the content View
+                    '#main': new LocaleEdit.Views.Overview({
+                    })
+             }).render()
+              .done(function() {
+                  jquery.when(LocaleEdit.InitFileListUi())
+                        .done(function(){
 
-      // Insert the tutorial into the layout.
-      layout.insertView(new LocaleEdit.Views.Overview());
+                          jquery('ul.nav li').removeClass('active');
+                        jquery('ul.nav a[href="#overview"]').parent().addClass('active');                  
+                      });
+              });  
 
-
-      layout
-        .render();
 
     },
 
     index: function() {
-      // Create a layout and associate it with the #main div.
-      var layout = new Backbone.Layout({
-        el: "#main"
-      });
 
-      // Insert the tutorial into the layout.
-      layout.insertView(new LocaleEdit.Views.Layout());
-      
-      // Render the layout into the DOM.
+        var collection = new LocaleEdit.Collection();
+            app.useLayout('main').setViews({
+                    // Attach the bar View into the content View
+                    '#main': new LocaleEdit.Views.Upload({
+                            collection: collection
+                    })
+             }).render()
+            .done(function(){
+              jquery.when(LocaleEdit.InitUi())
+                    .done(function(){
+                        jquery('ul.nav li').removeClass('active');
+                        jquery('ul.nav a[href="#upload"]').parent().addClass('active');              
+                    });
+              
+
+            });
 
 
-      layout
-        .render()
-        .done(function(){
-          
-             LocaleEdit.InitUi();  
-        });
     }
   });
+
 
   return Router;
 

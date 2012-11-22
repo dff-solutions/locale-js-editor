@@ -6,7 +6,8 @@ var connect = require('connect')
     , fs = require('fs')
     , path = require('path')
     , upload = require('jquery-file-upload-middleware')
-    , myFirstFormStrategy= require('./myFirstFormStrategy');
+    , myFirstFormStrategy= require('./myFirstFormStrategy')
+    , filemanager = require('./localeEditFileManager');
 
 
 
@@ -140,10 +141,14 @@ server.get('/node_modules/jquery-file-upload-middleware/public/files/*', functio
     });
 });
 
+//A Route for Creating a 500 Error (Useful to keep around)
+server.get('/api/currentfiles', filemanager.GetUserFiles);
+
 server.get('/*', function(req, res){
-    var filePath = '.' + req.url;
+    var filePath = '.' + req.url.split('?')[0];
     
     var extname = path.extname(filePath);
+    console.log(extname);
     var contentType = 'text/html';
     switch (extname) {
         case '.js':
@@ -169,13 +174,21 @@ server.get('/*', function(req, res){
             });
         }
         else {
+                if(extname.length === 0) {
+                    fs.readFile('index.html',function (err, data){
+                        res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
+                        res.write(data);
+                        res.end();
+                    }); 
+                }else{
+                    console.log('---');
+                    console.log(req.url);
+                    console.log('---');
+                    res.writeHead(404);
+                    res.end();
+                    //throw new NotFound;                    
+                }
 
-        console.log('---');
-        console.log(req.url);
-        console.log('---');
-            res.writeHead(404);
-            res.end();
-            //throw new NotFound;
         }
     });
 });
