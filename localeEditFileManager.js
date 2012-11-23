@@ -1,12 +1,45 @@
-var fs = require('fs');
+var fs = require('fs')
+   , path = require('path');
 
 
 
+
+function getUserFolder(req){
+
+    var dirName =  __dirname +'/files/user_' + req.session.passport.user;
+
+	if (path.existsSync(dirName)) { // or fs.existsSync
+	    return dirName;
+	}else{
+		fs.mkdir(dirName, function (err) {
+            if (err) {
+            	console.log('ERROR Creating Folde for User : ' + req.session.passport.user);
+            } else {
+
+            	fs.mkdir(dirName+'/thumbnail', function (err) {
+		            if (err) {
+		            	console.log('ERROR Creating Folder thumbnail for User : ' + req.session.passport.user);
+		            }
+		        })
+                return dirName;
+            }
+        })
+	}
+};
+
+
+
+exports.GetUserFolderName = function(req) {
+
+	getUserFolder(req);
+
+	return 'user_' + req.session.passport.user;	
+};
 
 exports.GetUserFiles = function(req, res) {
-	var path = "./files";
+	var dirName = getUserFolder(req);
     console.log('Retrieving UserFiles: ');
-	fs.readdir(path, function(err, files){
+	fs.readdir(dirName, function(err, files){
 
 		var jsOnlyFiles = [];
 
@@ -26,19 +59,65 @@ exports.GetUserFiles = function(req, res) {
 					        				 deleteUrl: req.originalUrl +  file }; })
 					        	));
 					        		res.end();
-								});
+	});
+};
+
+
+
+function parseLocaleJs (array) {
+	var nameSpace = '';
+	var entries = [];
+	var line = '';
+	for(i in array) {
+		if(i !== 0 ) {
+		    console.log(array[i]);
+		    line = array[i];
+
+		    if(i == 1 ) {
+		   		nameSpace = line.split('=')[0];
+		    }else{
+		    	entries.push(line);
+		    }
+		}
+	}
+	return {
+		NameSpace : nameSpace,
+		Entries : entries
+	}
 };
 
 
 exports.GetCurrentWorkingLocales = function(req, res) {
-	var path = "./files";
+	var dirName = getUserFolder(req);
+	var locales = [];
+	fs.readdir(dirName, function(err, files){
 
-	fs.readFile(path, 'utf8', function (err,data) {
-	  if (err) {
-	    return console.log(err);
-	  }
-	  console.log(data);
+		var jsOnlyFiles = [];
+
+		for (var i in files) {
+
+		    var fileName = dirName + '/' + files[i];
+			var stats = fs.lstatSync(fileName);
+
+			if (stats.isFile()) {
+				var array = fs.readFileSync(fileName).toString().split("\n");
+				var l = parseLocaleJs(array);
+				locales.push(l);
+				console.log(l);
+			}
+
+		}
+
+         res.writeHead(200, { 'Content-Type': 'application/json' });
+         res.write(
+         	JSON.stringify({
+         						Locales: locales
+         					})
+         		);
+		res.end();
 	});
+
+
 };
 
 /*= function (req) {

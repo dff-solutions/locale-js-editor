@@ -1,3 +1,4 @@
+//
 define([
   // Application.
   "app",
@@ -18,7 +19,7 @@ function(app,LocaleEdit,jquery) {
 
     overview: function() {
             app.useLayout('main').setViews({
-                    // Attach the bar View into the content View
+
                     '#main': new LocaleEdit.Views.Overview()
              }).render()
               .done(function() {
@@ -36,7 +37,7 @@ function(app,LocaleEdit,jquery) {
     index: function() {
 
             app.useLayout('main').setViews({
-                    // Attach the bar View into the content View
+
                     '#main': new LocaleEdit.Views.Upload()
              }).render()
             .done(function(){
@@ -62,12 +63,13 @@ function(app,LocaleEdit,jquery) {
              }).render()
             .done(function(){
                         jquery('ul.nav li').removeClass('active');
-                        jquery('ul.nav a[href="#edit"]').parent().addClass('active');              
-                        collection.fetch();
-            });
-
+                        jquery('ul.nav a[href="#edit"]').parent().addClass('active');   
+                        
+            });           
 
     }    
+
+
   });
 
 

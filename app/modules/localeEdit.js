@@ -41,6 +41,10 @@ function(app, jquery, Views ) {
     url: '/api/getworkinglocales',
     //localStorage: new Store('localeEdit-backbone'),
     // Filter down the list of all todo items that are finished.
+    parse : function(resp, xhr) {
+      return resp.Locales;
+    }
+    /*,
     initialize: function () {
         this.fetch({
             success: this.fetchSuccess,
@@ -54,13 +58,12 @@ function(app, jquery, Views ) {
     },
     fetchError: function (collection, response) {
         throw new Error("getworkinglocales fetch did get collection from API");
-    }
+    }*/
 
   });
 
 // Default views
   Localeedit.Views = Views;
-
 
 
   Localeedit.InitFileListUi = function() {

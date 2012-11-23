@@ -12,8 +12,8 @@ var connect = require('connect')
     , LocalStrategy = require('passport-local').Strategy;    
 
 var users = [
-    { id: 1, username: 'bob', password: 'secret', email: 'bob@example.com' }
-  , { id: 2, username: 'joe', password: 'birthday', email: 'joe@example.com' }
+    { id: 1, username: 'admin', password: 'mclaren', email: 'bob@example.com' }
+  , { id: 2, username: 'stephan', password: 'mclaren', email: 'joe@example.com' }
 ];
 
 function findById(id, fn) {
@@ -96,28 +96,6 @@ server.configure(function(){
   server.use(server.router);
   server.use(express.static(__dirname + '/../../public'));
 
-    /*server.use('/upload', upload({
-                    uploadUrl: '/node_modules/jquery-file-upload-middleware/public/files',
-                    tmpDir: '/tmp',
-                    maxPostSize: 11000000000, // 11 GB
-                    minFileSize: 1,
-                    maxFileSize: 10000000000, // 10 GB
-                    acceptFileTypes: /.+/i,
-                    // Files not matched by this regular expression force a download dialog,
-                    // to prevent executing any scripts in the context of the service domain:
-                    safeFileTypes: /\.(js)$/i,
-                    imageTypes: /\.(js)$/i,
-                    imageVersions: {
-                        thumbnail: {
-                            width: 80,
-                            height: 80
-                        }
-                    },
-                    accessControl: {
-                        allowOrigin: '*',
-                        allowMethods: 'OPTIONS, HEAD, GET, POST, PUT, DELETE'
-                    }        
-                }));*/
 
 });
 
@@ -166,15 +144,17 @@ io.sockets.on('connection', function(socket){
 /////// ADD ALL YOUR ROUTES HERE  /////////
  
 
-server.get('/', function(req,res){
-        //req.authenticate(['someName'], function(error, authenticated) {
-                   fs.readFile('index.html',function (err, data){
-                        res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
-                        res.write(data);
-                        res.end();
-                    });
-        //});
-});
+server.get('/', indexRequest);
+server.get('/edit', indexRequest);
+server.get('/overview', indexRequest);
+
+function indexRequest (req, res){
+  fs.readFile('index.html',function (err, data){
+      res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
+      res.write(data);
+      res.end();
+  });
+}
 
 
 //A Route for Creating a 500 Error (Useful to keep around)
@@ -283,8 +263,16 @@ server.get('/login', function(req, res){
   res.render('login', { user: req.user, message: req.flash('error') });
 });
 
-server.post('/upload', upload({
-                    uploadUrl: '/node_modules/jquery-file-upload-middleware/public/files',
+server.post('/upload', uploadfoo);
+
+
+function uploadfoo (req , res){
+
+    var userFolder  = filemanager.GetUserFolderName(req);
+
+    upload({    
+                    uploadUrl: __dirname + '/node_modules/jquery-file-upload-middleware/public/files/' + userFolder,
+                    uploadDir: __dirname + '/node_modules/jquery-file-upload-middleware/public/files/' + userFolder,
                     tmpDir: '/tmp',
                     maxPostSize: 11000000000, // 11 GB
                     minFileSize: 1,
@@ -304,7 +292,8 @@ server.post('/upload', upload({
                         allowOrigin: '*',
                         allowMethods: 'OPTIONS, HEAD, GET, POST, PUT, DELETE'
                     }        
-                }));
+                })(req, res);
+};
 
 // POST /login
 //   Use passport.authenticate() as route middleware to authenticate the
