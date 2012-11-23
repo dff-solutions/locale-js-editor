@@ -6,16 +6,12 @@ var connect = require('connect')
     , fs = require('fs')
     , path = require('path')
     , upload = require('jquery-file-upload-middleware')
-    , myFirstFormStrategy= require('./myFirstFormStrategy')
     , filemanager = require('./localeEditFileManager');
 
 
-function authorize(username, password) {
-    return 'someone' === username & 'password' === password;
-}
 
 //Setup Express
-var server = express.createServer(express.basicAuth(authorize));
+var server = express.createServer();
 server.configure(function(){
     server.set('views', __dirname + '/views');
     server.set('view options', { layout: false });
@@ -25,7 +21,6 @@ server.configure(function(){
     server.use(connect.static(__dirname + '/static'));
     server.use(server.router);
 
-    server.use( myFirstFormStrategy() )
 
     server.use('/upload', upload({
                     uploadUrl: '/node_modules/jquery-file-upload-middleware/public/files',
@@ -148,9 +143,68 @@ server.get('/node_modules/jquery-file-upload-middleware/public/files/*', functio
 server.get('/api/currentfiles', filemanager.GetUserFiles);
 
 //get the locales as json array of locale objects
-server.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales)
+server.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales);
 
-server.get('/*', function(req, res){
+server.get('/vendor/*', staticRequest);
+server.get('/app/*',  staticRequest);
+server.get('/main.html',  staticRequest);
+server.get('/static/*',  staticRequest);
+server.get('/assets/*',  staticRequest);
+
+
+function staticRequest (req, res){
+                        console.log(req.url);
+    var filePath = '.' + req.url.split('?')[0];
+    
+    var extname = path.extname(filePath);
+    console.log(extname);
+    var contentType = 'text/html';
+    switch (extname) {
+        case '.js':
+            contentType = 'text/javascript';
+            break;
+        case '.css':
+            contentType = 'text/css';
+            break;
+    }
+     
+    path.exists(filePath, function(exists) {
+     
+        if (exists) {
+            fs.readFile(filePath, function(error, content) {
+                if (error) {
+                    res.writeHead(500);
+                    res.end();
+                }
+                else {
+                    res.writeHead(200, { 'Content-Type': contentType });
+                    res.end(content, 'utf-8');
+                }
+            });
+        }
+        else {
+                if(extname.length === 0) {
+                    fs.readFile('index.html',function (err, data){
+                        res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
+                        res.write(data);
+                        res.end();
+                    }); 
+                }else{
+                    console.log('---');
+                    console.log(req.url);
+                    console.log('---');
+                    res.writeHead(404);
+                    res.end();
+                    //throw new NotFound;                    
+                }
+
+        }
+    });
+};
+
+
+server.get('/sadsadsadsad', function(req, res){
+                        console.log(req.url);
     var filePath = '.' + req.url.split('?')[0];
     
     var extname = path.extname(filePath);
