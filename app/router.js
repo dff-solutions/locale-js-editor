@@ -12,15 +12,14 @@ function(app,LocaleEdit,jquery) {
     routes: {
       "": "index",
       "upload": "index",      
+      "edit": "edit",            
       "overview": "overview"
     },
 
     overview: function() {
-         var collection = new LocaleEdit.Collection();
             app.useLayout('main').setViews({
                     // Attach the bar View into the content View
-                    '#main': new LocaleEdit.Views.Overview({
-                    })
+                    '#main': new LocaleEdit.Views.Overview()
              }).render()
               .done(function() {
                   jquery.when(LocaleEdit.InitFileListUi())
@@ -36,12 +35,9 @@ function(app,LocaleEdit,jquery) {
 
     index: function() {
 
-        var collection = new LocaleEdit.Collection();
             app.useLayout('main').setViews({
                     // Attach the bar View into the content View
-                    '#main': new LocaleEdit.Views.Upload({
-                            collection: collection
-                    })
+                    '#main': new LocaleEdit.Views.Upload()
              }).render()
             .done(function(){
               jquery.when(LocaleEdit.InitUi())
@@ -54,7 +50,24 @@ function(app,LocaleEdit,jquery) {
             });
 
 
-    }
+    },
+    edit: function() {
+
+            var collection = new LocaleEdit.Collection();
+            app.useLayout('main').setViews({
+                    // Attach the bar View into the content View
+                    '#main': new LocaleEdit.Views.Edit({
+                            collection: collection
+                    })
+             }).render()
+            .done(function(){
+                        jquery('ul.nav li').removeClass('active');
+                        jquery('ul.nav a[href="#edit"]').parent().addClass('active');              
+                        collection.fetch();
+            });
+
+
+    }    
   });
 
 

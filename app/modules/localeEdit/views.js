@@ -13,7 +13,6 @@ function(app, Backbone) {
     template: 'app/templates/localeedit/upload',
     tagName: 'div',
     manage: true
-
    });
 
   Views.Overview = Backbone.View.extend({
@@ -21,6 +20,17 @@ function(app, Backbone) {
     tagName: 'div',
     manage: true
    });
+
+Views.Edit = Backbone.View.extend({
+    template: 'app/templates/localeedit/edit',
+    tagName: 'div',
+    manage: true,
+/*    render: function () {
+        var tmpl = _.template(this.template);
+        this.$el.html(tmpl(this.model.toJSON()));
+        return this;
+    } */
+   });  
 
    return Views;
 

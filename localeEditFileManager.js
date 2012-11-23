@@ -30,6 +30,17 @@ exports.GetUserFiles = function(req, res) {
 };
 
 
+exports.GetCurrentWorkingLocales = function(req, res) {
+	var path = "./files";
+
+	fs.readFile(path, 'utf8', function (err,data) {
+	  if (err) {
+	    return console.log(err);
+	  }
+	  console.log(data);
+	});
+};
+
 /*= function (req) {
         if (!this.error) {
             var that = this,

@@ -10,13 +10,16 @@ var connect = require('connect')
     , filemanager = require('./localeEditFileManager');
 
 
+function authorize(username, password) {
+    return 'someone' === username & 'password' === password;
+}
 
 //Setup Express
-var server = express.createServer();
+var server = express.createServer(express.basicAuth(authorize));
 server.configure(function(){
     server.set('views', __dirname + '/views');
     server.set('view options', { layout: false });
-
+    
     server.use(express.cookieParser());
     server.use(express.session({ secret: "shhhhhhhhh!"}));
     server.use(connect.static(__dirname + '/static'));
@@ -141,8 +144,11 @@ server.get('/node_modules/jquery-file-upload-middleware/public/files/*', functio
     });
 });
 
-//A Route for Creating a 500 Error (Useful to keep around)
+//get a array of uploaded js files which represent the basis for our future work
 server.get('/api/currentfiles', filemanager.GetUserFiles);
+
+//get the locales as json array of locale objects
+server.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales)
 
 server.get('/*', function(req, res){
     var filePath = '.' + req.url.split('?')[0];

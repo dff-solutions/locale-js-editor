@@ -13,6 +13,8 @@ define([
   "jquery.fileupload-ui",
   "bootstrap",
   "bootstrap-image-gallery"
+  //,
+  //'libs/backbone/localstorage'
 
 ],
 
@@ -24,16 +26,36 @@ function(app, jquery, Views ) {
 
   // Default Model.
   Localeedit.Model = Backbone.Model.extend({
-        
+           defaults: {
+           Entries:  [],
+           NameSpace: 'Intranet.Locale'
+       },
+       initialize: function() { 
+            console.log('new Locale Model');
+       }
   });
 
   // Default Collection.
   Localeedit.Collection = Backbone.Collection.extend({
-    model: Localeedit.Model
-    //,
-
-    // Save all of the items under the `"foo"` namespace.
+    model: Localeedit.Model,
+    url: '/api/getworkinglocales',
     //localStorage: new Store('localeEdit-backbone'),
+    // Filter down the list of all todo items that are finished.
+    initialize: function () {
+        this.fetch({
+            success: this.fetchSuccess,
+            error: this.fetchError
+        });
+        this.deferred = new $.Deferred();
+    },
+    deferred: Function.constructor.prototype,
+    fetchSuccess: function (collection, response) {
+        collection.deferred.resolve();
+    },
+    fetchError: function (collection, response) {
+        throw new Error("getworkinglocales fetch did get collection from API");
+    }
+
   });
 
 // Default views
@@ -56,12 +78,19 @@ function(app, jquery, Views ) {
                     }).appendTo($fileWrapper);
                     $text.html(value.name);
 
+                    var $btnDelete = $('<button>', {
+                        type : "button",
+                        'class' : "pull-right btn btn-primary",
+                         'data-loading-text' : "deleteing"
+                    }).appendTo($fileWrapper);
+                    $btnDelete.html('Löschen');
+
                     var $btn = $('<button>', {
                         type : "button",
-                        'class' : "pull-right btn",
+                        'class' : "pull-right btn btn-primary",
                          'data-toggle' :  "button"
                     }).appendTo($fileWrapper);
-                    $btn .html('Fuer Bearbeitung übernemmen');
+                    $btn.html('Fuer Bearbeitung übernemmen');
                 })
                 
 
