@@ -11,7 +11,7 @@ function(app,LocaleEdit,jquery) {
   var Router = Backbone.Router.extend({
     routes: {
       "": "index",
-      "upload": "index",      
+      "index": "index",      
       "edit": "edit",            
       "overview": "overview"
     },
@@ -43,7 +43,7 @@ function(app,LocaleEdit,jquery) {
               jquery.when(LocaleEdit.InitUi())
                     .done(function(){
                         jquery('ul.nav li').removeClass('active');
-                        jquery('ul.nav a[href="#upload"]').parent().addClass('active');              
+                        jquery('ul.nav a[href="#index"]').parent().addClass('active');              
                     });
               
 

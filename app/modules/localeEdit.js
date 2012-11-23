@@ -84,6 +84,12 @@ function(app, jquery, Views ) {
                          'data-loading-text' : "deleteing"
                     }).appendTo($fileWrapper);
                     $btnDelete.html('Löschen');
+                    $btnDelete.click(function(){
+                        $.ajax({    url: 'http://192.168.2.102:8081/upload/'+value.name
+                                }).success(function(data){
+                                    console.log(data);
+                                });
+                    });
 
                     var $btn = $('<button>', {
                         type : "button",
