@@ -2,7 +2,7 @@
 define([
   // Application.
   "app",
-  "modules/localeEdit",
+  "modules/localeEdit/localeEdit",
   "jquery"
 ],
 

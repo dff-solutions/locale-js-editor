@@ -3,6 +3,7 @@ var connect = require('connect')
     , express = require('express')
     , io = require('socket.io')
     , port = (process.env.PORT || 8081)
+    , ip = (process.env.IP || '127.0.0.1')
     , fs = require('fs')
     , path = require('path')
     , upload = require('jquery-file-upload-middleware')
@@ -84,7 +85,7 @@ server.configure(function(){
   server.set('views', __dirname + '/views');
   server.set('view options', { layout: false });  
   server.set('view engine', 'ejs');
-  server.use(express.logger());
+//  server.use(express.logger());
   server.use(express.cookieParser());
   //server.use(express.bodyParser());
   server.use(express.methodOverride());
@@ -121,7 +122,7 @@ server.error(function(err, req, res, next){
 });
 
 
-server.listen( port);
+server.listen( port );
 
 //Setup Socket.IO
 var io = io.listen(server);
@@ -202,6 +203,7 @@ server.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales);
 
 server.get('/vendor/*', staticRequest);
 server.get('/app/*',  staticRequest);
+server.get('/app/img',  staticRequest);
 server.get('/main.html', ensureAuthenticated,  staticRequest);
 server.get('/static/*',  staticRequest);
 server.get('/assets/*',  staticRequest);
@@ -348,4 +350,4 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login')
 }
-console.log('Listening on http://0.0.0.0:' + port );
+console.log('Listening on ' + ip +  ':' + port );
