@@ -53,8 +53,8 @@ function(app, jquery, Views ) {
 
     parse : function(resp, xhr) {
       return resp.Locales;
-    }
-    /*,
+    },
+
     initialize: function () {
         this.fetch({
             success: this.fetchSuccess,
@@ -68,7 +68,7 @@ function(app, jquery, Views ) {
     },
     fetchError: function (collection, response) {
         throw new Error("getworkinglocales fetch did get collection from API");
-    }*/
+    }
 
   });
 

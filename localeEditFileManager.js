@@ -1,5 +1,14 @@
 var fs = require('fs')
-   , path = require('path');
+   , path = require('path')
+   , vm = require('vm')
+   , util = require('util')
+   , sandbox = {
+      Intranet: {
+      	Locale: {},
+      	namespace : function() {  }
+      }
+    },
+    intranetLocaleContext = vm.createContext(sandbox);
 
 
 
@@ -63,6 +72,31 @@ exports.GetUserFiles = function(req, res) {
 };
 
 
+function parseLocaleJs (array) {
+	var nameSpace = '';
+	var entries = [];
+	var line = '';
+	var key = '';
+	var value = '';
+
+	for(i in array) {
+		if(i !== 0 ) {
+		    console.log(array[i]);
+		    line = array[i];
+
+		    if(i == 1 ) {
+		   		nameSpace = line.split('=')[0];
+		    }else{
+
+		    	entries.push(line);
+		    }
+		}
+	}
+	return {
+		NameSpace : nameSpace,
+		Entries : entries
+	}
+};
 
 function parseLocaleJs (array) {
 	var nameSpace = '';
@@ -86,8 +120,69 @@ function parseLocaleJs (array) {
 	}
 };
 
+function toMultiLocaleItem (Locales){
+
+	var multiLocaleList = {};
+
+	for (var language in Locales) {
+	   var lang = Locales[language];
+	   for (var prop in lang) {
+	   	  var existing = multiLocaleList[prop] || {Values: []};
+	   	  var localValue = { Language: language,
+	   	  	                 Value: lang[prop]
+	   	  					  }
+	   	  existing.Values.push(localValue);
+		  multiLocaleList[prop] = existing;
+	   }
+	}
+
+	return multiLocaleList;
+
+}
 
 exports.GetCurrentWorkingLocales = function(req, res) {
+	var dirName = getUserFolder(req);
+	var locales = [];
+	fs.readdir(dirName, function(err, files){
+
+		var jsOnlyFiles = [];
+		var multiLocaleItem = {};	
+
+		var fileOnlyNames = [];
+		
+		for (var i in files) {
+
+		    var fileName = dirName + '/' + files[i];
+			var stats = fs.lstatSync(fileName);
+
+			if (stats.isFile()) {
+				fileOnlyNames.push(fileName);
+			}
+		}
+
+		var done = 0;
+		for (var i in fileOnlyNames) {
+
+		    var fileName = dirName + '/' + files[i];
+			var stats = fs.lstatSync(fileName);
+
+
+				fs.readFile(fileName, function handleFile(err, data) {
+					    vm.runInContext(data, intranetLocaleContext);
+						multiLocaleItem = toMultiLocaleItem(intranetLocaleContext.Intranet.Locale);	
+						done += 1;
+
+						if(done == fileOnlyNames.length  ) {
+							res.writeHead(200, { 'Content-Type': 'application/json' });
+							res.write( JSON.stringify(multiLocaleItem) );
+							res.end();
+						}			
+					});
+		}
+	});
+};
+
+exports.GetCurrentWorkingLocalesOld = function(req, res) {
 	var dirName = getUserFolder(req);
 	var locales = [];
 	fs.readdir(dirName, function(err, files){
@@ -101,9 +196,18 @@ exports.GetCurrentWorkingLocales = function(req, res) {
 
 			if (stats.isFile()) {
 				var array = fs.readFileSync(fileName).toString().split("\n");
+
+				fs.readFile(fileName, function handleFile(err, data) {
+
+					    vm.runInContext(data, intranetLocaleContext);
+						console.log(intranetLocaleContext);	
+						console.log(toMultiLocaleItem(intranetLocaleContext.Intranet.Locale));	
+					    	
+					});
+
 				var l = parseLocaleJs(array);
 				locales.push(l);
-				console.log(l);
+
 			}
 
 		}
