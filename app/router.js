@@ -57,7 +57,7 @@ function(app,LocaleEdit,jquery) {
             var collection = new LocaleEdit.Collection();
             app.useLayout('main').setViews({
                     // Attach the bar View into the content View
-                    '#main': new LocaleEdit.Views.Edit({
+                    '#main': new LocaleEdit.Views.EditList({
                             collection: collection
                     })
              }).render()

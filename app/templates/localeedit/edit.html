@@ -1,3 +1,13 @@
 <div class="edit">
-      <label><%= NameSpace %></label>
+      <label></label>
 </div>
+
+<% if (count) { %>
+<h4>Locales (<%= count %>)</h4>
+<hr>
+<% } else { %>
+<h4>No Locales found.</h4>
+<img src ="/app/img/loading.gif"></img>
+<% } %>
+
+<ul class="nav nav-pills locale-list"></ul>

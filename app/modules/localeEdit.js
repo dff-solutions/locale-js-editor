@@ -24,6 +24,17 @@ function(app, jquery, Views ) {
   // Create a new module.
   var Localeedit = app.module();
 
+  Localeedit.ItemModel = Backbone.Model.extend({
+           defaults: {
+           Key:  'Key',
+           Value: 'Value',
+           Active: false
+       },
+       initialize: function() { 
+            console.log('new Locale ItemModel');
+       }
+  });
+
   // Default Model.
   Localeedit.Model = Backbone.Model.extend({
            defaults: {
@@ -39,8 +50,7 @@ function(app, jquery, Views ) {
   Localeedit.Collection = Backbone.Collection.extend({
     model: Localeedit.Model,
     url: '/api/getworkinglocales',
-    //localStorage: new Store('localeEdit-backbone'),
-    // Filter down the list of all todo items that are finished.
+
     parse : function(resp, xhr) {
       return resp.Locales;
     }

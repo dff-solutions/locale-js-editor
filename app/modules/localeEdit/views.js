@@ -19,46 +19,141 @@ function(app, Backbone) {
     manage: true
    });
 
-  Views.EditItem = Backbone.View.extend({
-    template: 'app/templates/localeedit/editItem',
-    manage: true
+  Views.EditKeyValueItem = Backbone.View.extend({
+    template: 'app/templates/localeedit/editKeyValueItem',
+    manage: true,
+
+    tagName: "li",
+
+    events: {
+      click: "activateInput"
+    },
+    
+    activateInput: function(ev) {
+      var model = this.model;
+      //this.$el.find('input').removeAttr('disable');
+      model.Active = true;
+      // var org = app.router.users.org;
+      // var user = app.router.repos.user;
+
+      // // Immediately reflect the active state.
+      // app.active = this.model;
+      this.render();
+
+      // // Easily create a URL.
+      // app.router.go("org", org, "user", user, "repo", model.get("name"));
+
+      return false;
+    },
+    data: function() {
+      return { model: this.model };
+    }
+    // data: function() {
+    //   var line = this.model !== undefined ? this.model : ':';
+    //   var split = line.split(':');
+
+    //   return { 
+    //            Key : split[0] !== undefined ? split[0] : '',
+    //            Value : split[1] !== undefined ? split[1] : '',
+    //            Active: false
+    //          };
+    // } 
    });
 
-Views.Edit = Backbone.View.extend({
-    template: 'app/templates/localeedit/edit',
-    tagName: 'div',
+
+  Views.EditItem = Backbone.View.extend({
+    template: 'app/templates/localeedit/editItem',
     manage: true,
-    initialize: function() {
 
-      _.bindAll(this, 'render');
-      this.collection.bind("reset", this.render, this);  // reset is called on fetch of collection
-      this.collection.fetch();
+    tagName: "li",
+    className: 'localeItem',
 
+    data: function() {
+      return { model: this.model };
     },
-    // Insert all subViews prior to rendering the View.
-  beforeRender: function() {
-    // Iterate over the passed collection and create a view for each item.
-    this.collection.each(function(model) {
-      // Pass the sample data to the new SomeItem View.
-      this.insertView(new Views.EditItem({
-        serialize:  model.toJSON() 
-      }));
-    }, this);
-  }
-  // ,
-  //   render : function() {
-  //     this._render();
-  //     // var     tmpl =  _.template( $('.edit').html() );
-  //     // console.log(this.collection);
-      
-  //     $.each(this.collection.models, function(index, value){
-  //       var obj = value.toJSON();
 
-  //       console.log(obj);
-  //     })
+    events: {
+      click: "activateInput"
+    },
+    
+    activateInput: function(ev) {
+      var model = this.model;
+      // var org = app.router.users.org;
+      // var user = app.router.repos.user;
 
-  //     //$mainthis.$el.html( this.tmpl( this.collection.toJSON() ) );
-  //   }
+      // // Immediately reflect the active state.
+      // app.active = this.model;
+      // this.render();
+
+      // // Easily create a URL.
+      // app.router.go("org", org, "user", user, "repo", model.get("name"));
+
+      return false;
+    },
+
+    beforeRender: function() {
+      var Entries = this.model.get('Entries');
+      for(var i = 0 ; i < Entries.length; i++ ) {
+        var current = Entries[i];
+        var line = current !== undefined ? current : ':';
+        var split = line.split(':');
+
+        var objModel = { 
+               Key : split[0] !== undefined ? split[0] : '',
+               Value : split[1] !== undefined ? split[1] : '',
+               Active: false
+             };
+
+        this.insertView("ul", new Views.EditKeyValueItem({
+          model: objModel
+        }));
+
+      }
+       
+    }
+
+   });
+
+Views.EditList = Backbone.View.extend({
+    template: 'app/templates/localeedit/edit',
+    //tagName: 'div',
+    manage: true,
+   
+    className: "locale-wrapper",
+
+    data: function() {
+      return {
+        count: this.collection.length 
+      };
+    },
+
+    beforeRender: function() {
+      //var active = this.options.commits.repo;
+
+      this.collection.each(function(locale) {
+        // if (locale.get("name") === active) {
+        //   app.active = repo;
+        // }
+
+        this.insertView("ul", new Views.EditItem({
+          model: locale
+        }));
+      }, this);
+    },
+
+    cleanup: function() {
+      this.collection.off(null, null, this);
+    },
+
+    initialize: function() {
+      this.collection.on("reset", this.render, this);
+
+      this.collection.on("fetch", function() {
+        this.$("ul").parent().html("<img src='/app/img/loading.gif'>");
+      }, this);
+      this.collection.fetch();
+    }    
+
   });  
 
    return Views;
