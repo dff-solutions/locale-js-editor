@@ -72,6 +72,26 @@ exports.GetUserFiles = function(req, res) {
 };
 
 
+exports.DeleteUserFile  = function(req, res) {
+	var dirName = getUserFolder(req);
+    console.log('Retrieving UserFiles: ');
+
+    var fileToDelete =req.body.Filename;
+	
+    fs.unlink(dirName + '/' + fileToDelete, function (err) {
+	  if (err) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.write(JSON.stringify( { state: 'error'}));
+		res.end();
+	  } else {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.write(JSON.stringify( { state: 'success'}));
+		res.end();	  	
+	  }
+	});
+
+};
+
 function parseLocaleJs (array) {
 	var nameSpace = '';
 	var entries = [];

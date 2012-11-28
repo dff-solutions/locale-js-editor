@@ -77,6 +77,7 @@ function(app, jquery, Views ) {
 
 
   Localeedit.InitFileListUi = function() {
+        $('.file-list-wrapper').html('');
         var $fileListWrapper = $('.file-list-wrapper')
         return $.ajax({
                 url: '/api/currentfiles'
@@ -98,18 +99,16 @@ function(app, jquery, Views ) {
                     }).appendTo($fileWrapper);
                     $btnDelete.html('Löschen');
                     $btnDelete.click(function(){
-                        $.ajax({    url: '/api/delete/'+value.name
+                        $.ajax({    url: '/api/deleteUserFile/',
+                                    type: 'POST',
+                                    data: {
+                                      Filename: value.name
+                                    }
                                 }).success(function(data){
-                                    console.log(data);
+                                    Localeedit.InitFileListUi();
                                 });
                     });
 
-                    var $btn = $('<button>', {
-                        type : "button",
-                        'class' : "pull-right btn btn-primary",
-                         'data-toggle' :  "button"
-                    }).appendTo($fileWrapper);
-                    $btn.html('Fuer Bearbeitung übernemmen');
                 })
                 
 

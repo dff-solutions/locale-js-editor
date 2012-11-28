@@ -146,6 +146,7 @@ io.sockets.on('connection', function(socket){
  
 
 server.get('/', indexRequest);
+server.get('/index', indexRequest);
 server.get('/edit', indexRequest);
 server.get('/overview', indexRequest);
 
@@ -200,6 +201,9 @@ server.get('/api/currentfiles', filemanager.GetUserFiles);
 
 //get the locales as json array of locale objects
 server.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales);
+
+//
+server.post('/api/deleteUserFile',express.bodyParser(), filemanager.DeleteUserFile);
 
 server.get('/vendor/*', staticRequest);
 server.get('/app/*',  staticRequest);
