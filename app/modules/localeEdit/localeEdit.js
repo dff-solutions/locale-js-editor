@@ -98,7 +98,7 @@ function(app, jquery, Views ) {
                     }).appendTo($fileWrapper);
                     $btnDelete.html('Löschen');
                     $btnDelete.click(function(){
-                        $.ajax({    url: 'http://192.168.2.102:8081/upload/'+value.name
+                        $.ajax({    url: '/api/delete/'+value.name
                                 }).success(function(data){
                                     console.log(data);
                                 });

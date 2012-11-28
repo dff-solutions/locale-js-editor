@@ -55,7 +55,6 @@ function($, _, Backbone) {
       if (this.layout && this.layout.options.template === name) {
         return this.layout;
       }
-
       // If a layout already exists, remove it from the DOM.
       if (this.layout) {
         this.layout.remove();
@@ -69,9 +68,8 @@ function($, _, Backbone) {
       });
 
       // Insert into the DOM.
-      $('#main').fadeOut('slow',function() {$('#main').empty().append(layout.el)} );
-      $('#main').fadeIn();
-      
+      $('#main').empty().append(layout.el);
+      $('#main').fadeIn('slow');
 
       // Render the layout.
       layout.render();

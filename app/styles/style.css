@@ -39,4 +39,7 @@ li.edititem {
 .edit-wrapper-inner{
 	background-color: #ccc;
 	border: solid 1px #5E5E5E;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
 }
