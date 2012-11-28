@@ -8,7 +8,8 @@
 			<hr>
 <% } else { %>
 			<h4>No Locales found.</h4>
-			<img src ="/app/img/loading.gif"></img>
+			<div id="loading"><img src ="/app/img/loading.gif"></img></div>
+			
 <% } %>			
 		</div>
 		<div class="pull-right"> 
@@ -25,7 +26,7 @@
 
 <div class="container">
 		<div class="row" style="padding: 0 0 0 40px;"> 
-		<input class="input-medium" type="text"  placeholder="KEY"></input>
+		<input id="keySearchTask" class="input-medium" type="text"  placeholder="KEY"></input>
 		<input class="input-medium" type="text"  placeholder="LANGUAGE"></input>
 		<input class="input-medium" type="text"  placeholder="VALUE"></input>
 		</diV>

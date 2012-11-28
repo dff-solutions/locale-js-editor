@@ -79,6 +79,20 @@ Views.EditList = Backbone.View.extend({
       };
     },
 
+    events: {
+      "keyup #keySearchTask" : "search"
+      //,
+      //"change #taskSorting":"sorts"
+    },
+    search: function(e){
+      var letters = $("#keySearchTask").val();
+      this.renderList(this.collection.search(letters));
+    },  
+
+    renderList : function(tasks){
+      console.log(task);
+    },    
+
     beforeRender: function() {
       //var active = this.options.commits.repo;
 
@@ -101,7 +115,7 @@ Views.EditList = Backbone.View.extend({
       this.collection.on("reset", this.render, this);
 
       this.collection.on("fetch", function() {
-        this.$("ul").parent().html("<img src='/app/img/loading.gif'>");
+        this.$("div.loading").html("<img src='/app/img/loading.gif'>");
       }, this);
       //this.collection.fetch();
     }    
