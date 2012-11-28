@@ -26,8 +26,8 @@ function(app, jquery, Views ) {
 
   Localeedit.ItemModel = Backbone.Model.extend({
            defaults: {
-           Key:  'Key',
-           Value: 'Value',
+           Language:  'XX',
+           Value: 'Foo',
            Active: false
        },
        initialize: function() { 
@@ -38,8 +38,8 @@ function(app, jquery, Views ) {
   // Default Model.
   Localeedit.Model = Backbone.Model.extend({
            defaults: {
-           Entries:  [],
-           NameSpace: 'Intranet.Locale'
+           LocaleKey:  'LOCALKEYDEFAULT',
+           LocaleValues: []
        },
        initialize: function() { 
             console.log('new Locale Model');
@@ -52,7 +52,8 @@ function(app, jquery, Views ) {
     url: '/api/getworkinglocales',
 
     parse : function(resp, xhr) {
-      return resp.Locales;
+
+      return resp;
     },
 
     initialize: function () {

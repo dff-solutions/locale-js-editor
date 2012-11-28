@@ -124,6 +124,7 @@ function toMultiLocaleItem (Locales){
 
 	var multiLocaleList = {};
 
+
 	for (var language in Locales) {
 	   var lang = Locales[language];
 	   for (var prop in lang) {
@@ -136,7 +137,17 @@ function toMultiLocaleItem (Locales){
 	   }
 	}
 
-	return multiLocaleList;
+	var multiLocaleArray = [];
+	for (var prop in multiLocaleList) {
+		var v = multiLocaleList[prop];
+
+		multiLocaleArray.push({
+			LocaleKey: prop,
+			LocaleValues: v.Values
+		});
+	}
+
+	return multiLocaleArray;
 
 }
 

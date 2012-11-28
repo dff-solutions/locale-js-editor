@@ -24,6 +24,7 @@ function(app, Backbone) {
     manage: true,
 
     tagName: "li",
+    className: 'edititem ',
 
     events: {
       click: "activateInput"
@@ -48,16 +49,7 @@ function(app, Backbone) {
     data: function() {
       return { model: this.model };
     }
-    // data: function() {
-    //   var line = this.model !== undefined ? this.model : ':';
-    //   var split = line.split(':');
 
-    //   return { 
-    //            Key : split[0] !== undefined ? split[0] : '',
-    //            Value : split[1] !== undefined ? split[1] : '',
-    //            Active: false
-    //          };
-    // } 
    });
 
 
@@ -65,8 +57,8 @@ function(app, Backbone) {
     template: 'app/templates/localeedit/editItem',
     manage: true,
 
-    tagName: "li",
-    className: 'localeItem',
+    tagName: "div",
+    className: 'edit-wrapper-outer',
 
     data: function() {
       return { model: this.model };
@@ -78,38 +70,20 @@ function(app, Backbone) {
     
     activateInput: function(ev) {
       var model = this.model;
-      // var org = app.router.users.org;
-      // var user = app.router.repos.user;
 
-      // // Immediately reflect the active state.
-      // app.active = this.model;
-      // this.render();
-
-      // // Easily create a URL.
-      // app.router.go("org", org, "user", user, "repo", model.get("name"));
 
       return false;
     },
 
     beforeRender: function() {
-      var Entries = this.model.get('Entries');
-      for(var i = 0 ; i < Entries.length; i++ ) {
-        var current = Entries[i];
-        var line = current !== undefined ? current : ':';
-        var split = line.split(':');
+      var items = this.model.get('LocaleValues');
 
-        var objModel = { 
-               Key : split[0] !== undefined ? split[0] : '',
-               Value : split[1] !== undefined ? split[1] : '',
-               Active: false
-             };
-
-        this.insertView("ul", new Views.EditKeyValueItem({
-          model: objModel
+      for (var i = 0; i < items.length; i++) {
+        this.insertView("ul.locales", new Views.EditKeyValueItem({
+          model: items[i]
         }));
-
       }
-       
+
     }
 
    });
@@ -119,8 +93,6 @@ Views.EditList = Backbone.View.extend({
     //tagName: 'div',
     manage: true,
    
-    className: "locale-wrapper",
-
     data: function() {
       return {
         count: this.collection.length 
@@ -135,7 +107,7 @@ Views.EditList = Backbone.View.extend({
         //   app.active = repo;
         // }
 
-        this.insertView("ul", new Views.EditItem({
+        this.insertView("div.localelistitems", new Views.EditItem({
           model: locale
         }));
       }, this);
