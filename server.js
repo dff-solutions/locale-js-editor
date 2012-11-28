@@ -150,6 +150,11 @@ server.get('/index', indexRequest);
 server.get('/edit', indexRequest);
 server.get('/overview', indexRequest);
 
+server.get('/upload', function indexRequest (req, res){
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.end();
+});
+
 function indexRequest (req, res){
   fs.readFile('index.html',function (err, data){
       res.writeHead(200, {'Content-Type': 'text/html','Content-Length':data.length});
