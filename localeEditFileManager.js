@@ -130,7 +130,7 @@ function toMultiLocaleItem (Locales){
 	   for (var prop in lang) {
 	   	  var existing = multiLocaleList[prop] || {Values: []};
 	   	  var localValue = { Language: language,
-	   	  	                 Value: lang[prop]
+	   	  	                 Value: lang[prop].toString()
 	   	  					  }
 	   	  existing.Values.push(localValue);
 		  multiLocaleList[prop] = existing;

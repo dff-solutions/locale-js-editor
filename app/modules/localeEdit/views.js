@@ -27,25 +27,14 @@ function(app, Backbone) {
     className: 'edititem ',
 
     events: {
-      click: "activateInput"
+      "change input.translation":  "translationChanged"
     },
     
-    activateInput: function(ev) {
-      var model = this.model;
-      //this.$el.find('input').removeAttr('disable');
-      model.Active = true;
-      // var org = app.router.users.org;
-      // var user = app.router.repos.user;
+    translationChanged: function(ev) {
+      console.log(ev);
+    },    
 
-      // // Immediately reflect the active state.
-      // app.active = this.model;
-      this.render();
 
-      // // Easily create a URL.
-      // app.router.go("org", org, "user", user, "repo", model.get("name"));
-
-      return false;
-    },
     data: function() {
       return { model: this.model };
     }
@@ -64,16 +53,6 @@ function(app, Backbone) {
       return { model: this.model };
     },
 
-    events: {
-      click: "activateInput"
-    },
-    
-    activateInput: function(ev) {
-      var model = this.model;
-
-
-      return false;
-    },
 
     beforeRender: function() {
       var items = this.model.get('LocaleValues');
@@ -92,7 +71,8 @@ Views.EditList = Backbone.View.extend({
     template: 'app/templates/localeedit/edit',
     //tagName: 'div',
     manage: true,
-   
+       className: 'container',
+
     data: function() {
       return {
         count: this.collection.length 
@@ -123,7 +103,7 @@ Views.EditList = Backbone.View.extend({
       this.collection.on("fetch", function() {
         this.$("ul").parent().html("<img src='/app/img/loading.gif'>");
       }, this);
-      this.collection.fetch();
+      //this.collection.fetch();
     }    
 
   });  

@@ -32,4 +32,11 @@ li.edititem {
     clear: left;
 }
 
+.edit-wrapper-outer{
+	margin: 0 0 10px 0;
+}
 
+.edit-wrapper-inner{
+	background-color: #ccc;
+	border: solid 1px #5E5E5E;
+}

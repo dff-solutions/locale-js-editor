@@ -27,8 +27,7 @@ function(app, jquery, Views ) {
   Localeedit.ItemModel = Backbone.Model.extend({
            defaults: {
            Language:  'XX',
-           Value: 'Foo',
-           Active: false
+           Value: 'Foo'
        },
        initialize: function() { 
             console.log('new Locale ItemModel');

@@ -1,13 +1,34 @@
-<div class="edit">
-      <label></label>
-</div>
 
+
+
+	<div class="row" style="padding: 0 0 0 40px;"> 
+		<div class="pull-left"> 
 <% if (count) { %>
-<h4>Locales (<%= count %>)</h4>
-<hr>
+			<h4>Anzahl der Locale Keys (<%= count %>)</h4>
+			<hr>
 <% } else { %>
-<h4>No Locales found.</h4>
-<img src ="/app/img/loading.gif"></img>
-<% } %>
+			<h4>No Locales found.</h4>
+			<img src ="/app/img/loading.gif"></img>
+<% } %>			
+		</div>
+		<div class="pull-right"> 
+			<button type="foo" class="btn btn-primary save">
+	            <i class=" icon-ok icon-white"></i>
+	            <span>Save</span>
+	        </button>
+			<button type="foo" class="btn btn-danger delete">
+	            <i class="icon-ban-circle icon-white"></i>
+	            <span>Reload</span>
+	        </button>	        
+		</diV>	
+	</div>	
+
+<div class="container">
+		<div class="row" style="padding: 0 0 0 40px;"> 
+		<input class="input-medium" type="text"  placeholder="KEY"></input>
+		<input class="input-medium" type="text"  placeholder="LANGUAGE"></input>
+		<input class="input-medium" type="text"  placeholder="VALUE"></input>
+		</diV>
+</div>
 
 <div class="localelistitems"></div>
