@@ -19,6 +19,7 @@ function(app, Backbone) {
     manage: true
    });
 
+
   Views.EditKeyValueItem = Backbone.View.extend({
     template: 'app/templates/localeedit/editKeyValueItem',
     manage: true,
@@ -89,7 +90,7 @@ Views.EditList = Backbone.View.extend({
       this.renderList(this.collection.search(letters));
     },  
 
-    renderList : function(tasks){
+    renderList : function(task){
       console.log(task);
     },    
 
