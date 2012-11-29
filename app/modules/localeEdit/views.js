@@ -32,7 +32,8 @@ function(app, Backbone) {
     },
     
     translationChanged: function(ev) {
-      console.log(ev);
+      this.model.Value = $(ev.target).val();
+      this.render();
     },    
 
 
@@ -81,15 +82,22 @@ Views.EditList = Backbone.View.extend({
     },
 
     events: {
-      "keyup #keySearchTask" : "search"
+      "keyup #keySearchTask" : "search",
+      "click #SaveBtn" : "save"
       //,
       //"change #taskSorting":"sorts"
     },
     search: function(e){
-      var letters = $("#keySearchTask").val();
-      this.renderList(this.collection.search(letters));
+      var searchTerm = $("#keySearchTask").val();
+      //this.renderList(this.collection.search(letters));
+      this.collection.filter(function(model) {
+        return model.get("LocaleKey").indexOf(searchTerm) != -1;
+      });
+      this.collection.reset()
     },  
-
+    save: function() {          
+        localStorage.setItem(this.name, JSON.stringify(this.data));
+    },
     renderList : function(task){
       console.log(task);
     },    

@@ -2,6 +2,7 @@ var fs = require('fs')
    , path = require('path')
    , vm = require('vm')
    , util = require('util')
+   , linq  = require('linq')   
    , sandbox = {
       Intranet: {
       	Locale: {},
@@ -144,7 +145,6 @@ function toMultiLocaleItem (Locales){
 
 	var multiLocaleList = {};
 
-
 	for (var language in Locales) {
 	   var lang = Locales[language];
 	   for (var prop in lang) {
@@ -254,19 +254,3 @@ exports.GetCurrentWorkingLocalesOld = function(req, res) {
 
 
 };
-
-/*= function (req) {
-        if (!this.error) {
-            var that = this,
-                baseUrl = (options.ssl ? 'https:' : 'http:') +
-                    '//' + req.headers.host;
-            this.delete_url = baseUrl +  req.originalUrl + '/' +encodeURIComponent(this.name);
-            this.url = baseUrl + options.uploadUrl + '/' +encodeURIComponent(this.name);
-            Object.keys(options.imageVersions).forEach(function (version) {
-                if (_existsSync(
-                    options.uploadDir + '/' + version + '/' + that.name
-                )) {
-                    that[version + '_url'] = baseUrl +  options.uploadUrl + '/' + version + '/' + encodeURIComponent(that.name);
-                }
-            });
-        }*/

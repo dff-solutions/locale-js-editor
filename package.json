@@ -12,6 +12,7 @@
       "passport": "*",
       "passport-local": "*",
       "ejs": "*",
-      "jquery-file-upload-middleware": "*"
+      "jquery-file-upload-middleware": "*",
+      "linq": ""
   }
 }

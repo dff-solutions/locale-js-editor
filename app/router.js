@@ -65,7 +65,6 @@ function(app,LocaleEdit,jquery) {
                         jquery('ul.nav li').removeClass('active');
                         jquery('ul.nav a[href="#edit"]').parent().addClass('active');   
             }).done(function(){
-
                         collection.fetch();  
             });     
 
