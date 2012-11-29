@@ -1,9 +1,7 @@
 //setup Dependencies
 var connect = require('connect')
     , express = require('express')
-    , io = require('socket.io')
     , port = (process.env.PORT || 8081)
-    , ip = (process.env.IP || '127.0.0.1')
     , fs = require('fs')
     , path = require('path')
     , upload = require('jquery-file-upload-middleware')
@@ -103,41 +101,10 @@ app.configure(function(){
 });
 
 
-//setup the errors
-// app.error(function(err, req, res, next){
-//     if (err instanceof NotFound) {
-//         res.render('404.jade', { locals: { 
-//                   title : '404 - Not Found'
-//                  ,description: ''
-//                  ,author: ''
-//                  ,analyticssiteid: 'XXXXXXX' 
-//                 },status: 404 });
-//     } else {
-//         res.render('500.jade', { locals: { 
-//                   title : 'The app Encountered an Error'
-//                  ,description: ''
-//                  ,author: ''
-//                  ,analyticssiteid: 'XXXXXXX'
-//                  ,error: err 
-//                 },status: 500 });
-//     }
-// });
-
 
 app.listen( port );
 
-// //Setup Socket.IO
-// var io = io.listen(app);
-// io.sockets.on('connection', function(socket){
-//   console.log('Client Connected');
-//   socket.on('message', function(data){
-//     socket.broadcast.emit('app_message',data);
-//     socket.emit('app_message',data);
-//   });
-//   socket.on('disconnect', function(){
-//     console.log('Client Disconnected.');
-//   });
-// });
+
 
 
 ///////////////////////////////////////////
@@ -172,7 +139,7 @@ app.get('/500', function(req, res){
 });
 
 
-app.get('/node_modules/jquery-file-upload-middleware/public/files/*', function(req, res){
+app.get('/files/*', function(req, res){
     var filePath = '.' + req.url;
     
     var extname = path.extname(filePath);
@@ -205,11 +172,8 @@ app.get('/node_modules/jquery-file-upload-middleware/public/files/*', function(r
 
 //get a array of uploaded js files which represent the basis for our future work
 app.get('/api/currentfiles', filemanager.GetUserFiles);
-
 //get the locales as json array of locale objects
 app.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales);
-
-//
 app.post('/api/deleteUserFile',express.bodyParser(), filemanager.DeleteUserFile);
 
 app.get('/vendor/*', staticRequest);
@@ -273,13 +237,13 @@ function staticRequest (req, res){
 
 
 app.get('/login', function(req, res){
-  res.render('login', { user: req.user, message: 'none' });
+  res.render('login', { user: req.user, message: 'Locale Editor Please login!' });
 });
 
-app.post('/upload', uploadfoo);
+app.post('/upload', uploadHandler);
 
 
-function uploadfoo (req , res){
+function uploadHandler (req , res){
 
     var userFolder  = filemanager.GetUserFolderName(req);
 
@@ -321,30 +285,10 @@ app.post('/login', express.bodyParser(),
     res.redirect('/');
   });
   
-// POST /login
-//   This is an alternative implementation that uses a custom callback to
-//   acheive the same functionality.
-/*
-app.post('/login', function(req, res, next) {
-  passport.authenticate('local', function(err, user, info) {
-    if (err) { return next(err) }
-    if (!user) {
-      req.flash('error', info.message);
-      return res.redirect('/login')
-    }
-    req.logIn(user, function(err) {
-      if (err) { return next(err); }
-      return res.redirect('/users/' + user.username);
-    });
-  })(req, res, next);
-});
-*/
-
 app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
 });
-
 
 function NotFound(msg){
     this.name = 'NotFound';
@@ -361,4 +305,4 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   res.redirect('/login')
 }
-console.log('Listening on ' + ip +  ':' + port );
+console.log('Listening on 0.0.0.1 :' + port );
