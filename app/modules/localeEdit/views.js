@@ -96,7 +96,8 @@ Views.EditList = Backbone.View.extend({
       this.collection.reset()
     },  
     save: function() {          
-        localStorage.setItem(this.name, JSON.stringify(this.data));
+        //localStorage.setItem(this.name, JSON.stringify(this.data));
+        console.log(JSON.stringify(this.collection);
     },
     renderList : function(task){
       console.log(task);
