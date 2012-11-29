@@ -1,15 +1,17 @@
 {
-  "name": "Backbone Boilerplate",
-  "version": "0.1.0",
-
-  "jam": {
-    "packageDir": "./vendor/jam",
-    "baseUrl": "./app",
-
-    "dependencies": {
-      "backbone": "*",
-      "jquery": "*",
-      "lodash": "*"
-    }
+  "name": "dff-locale-editor",
+  "description": "a editor for javascript locale objects",
+  "author": "Stephan Träger <stephan.traeger@dff-solutions.de>",
+  "version": "0.0.1",
+  "engines": {
+      "node": "0.8.6"
+    },  
+  "dependencies": {
+    "express": ">= 3.0.0",
+      "connect": "*",      
+      "passport": "*",
+      "passport-local": "*",
+      "ejs": "*",
+      "jquery-file-upload-middleware": "*"
   }
 }
