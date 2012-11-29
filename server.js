@@ -80,62 +80,64 @@ passport.use(new LocalStrategy(
 
 
 //Setup Express
-var server = express.createServer();
-server.configure(function(){
-  server.set('views', __dirname + '/views');
-  server.set('view options', { layout: false });  
-  server.set('view engine', 'ejs');
-//  server.use(express.logger());
-  server.use(express.cookieParser());
-  //server.use(express.bodyParser());
-  server.use(express.methodOverride());
-  server.use(express.session({ secret: 'keyboard cat' }));
+var app = express();
+app.configure(function(){
+  app.set('views', __dirname + '/views');
+  app.set('view options', { layout: false });  
+  app.set('view engine', 'ejs');
+//  app.use(express.logger());
+  app.use(express.cookieParser());
+  //app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(express.session({ secret: 'keyboard cat' }));
   // Initialize Passport!  Also use passport.session() middleware, to support
   // persistent login sessions (recommended).
-  server.use(passport.initialize());
-  server.use(passport.session());
-  server.use(server.router);
-  server.use(express.static(__dirname + '/../../public'));
-
-
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(app.router);
+  app.use(express.static(__dirname + '/../../public'));
+  app.use(express.errorHandler({ 
+        dumpExceptions: true, 
+        showStack: true 
+    }));
 });
 
 
 //setup the errors
-server.error(function(err, req, res, next){
-    if (err instanceof NotFound) {
-        res.render('404.jade', { locals: { 
-                  title : '404 - Not Found'
-                 ,description: ''
-                 ,author: ''
-                 ,analyticssiteid: 'XXXXXXX' 
-                },status: 404 });
-    } else {
-        res.render('500.jade', { locals: { 
-                  title : 'The Server Encountered an Error'
-                 ,description: ''
-                 ,author: ''
-                 ,analyticssiteid: 'XXXXXXX'
-                 ,error: err 
-                },status: 500 });
-    }
-});
+// app.error(function(err, req, res, next){
+//     if (err instanceof NotFound) {
+//         res.render('404.jade', { locals: { 
+//                   title : '404 - Not Found'
+//                  ,description: ''
+//                  ,author: ''
+//                  ,analyticssiteid: 'XXXXXXX' 
+//                 },status: 404 });
+//     } else {
+//         res.render('500.jade', { locals: { 
+//                   title : 'The app Encountered an Error'
+//                  ,description: ''
+//                  ,author: ''
+//                  ,analyticssiteid: 'XXXXXXX'
+//                  ,error: err 
+//                 },status: 500 });
+//     }
+// });
 
 
-server.listen( port );
+app.listen( port );
 
-//Setup Socket.IO
-var io = io.listen(server);
-io.sockets.on('connection', function(socket){
-  console.log('Client Connected');
-  socket.on('message', function(data){
-    socket.broadcast.emit('server_message',data);
-    socket.emit('server_message',data);
-  });
-  socket.on('disconnect', function(){
-    console.log('Client Disconnected.');
-  });
-});
+// //Setup Socket.IO
+// var io = io.listen(app);
+// io.sockets.on('connection', function(socket){
+//   console.log('Client Connected');
+//   socket.on('message', function(data){
+//     socket.broadcast.emit('app_message',data);
+//     socket.emit('app_message',data);
+//   });
+//   socket.on('disconnect', function(){
+//     console.log('Client Disconnected.');
+//   });
+// });
 
 
 ///////////////////////////////////////////
@@ -145,12 +147,12 @@ io.sockets.on('connection', function(socket){
 /////// ADD ALL YOUR ROUTES HERE  /////////
  
 
-server.get('/', indexRequest);
-server.get('/index', indexRequest);
-server.get('/edit', indexRequest);
-server.get('/overview', indexRequest);
+app.get('/', indexRequest);
+app.get('/index', indexRequest);
+app.get('/edit', indexRequest);
+app.get('/overview', indexRequest);
 
-server.get('/upload', function indexRequest (req, res){
+app.get('/upload', function indexRequest (req, res){
       res.writeHead(200, {'Content-Type': 'text/html'});
       res.end();
 });
@@ -165,12 +167,12 @@ function indexRequest (req, res){
 
 
 //A Route for Creating a 500 Error (Useful to keep around)
-server.get('/500', function(req, res){
+app.get('/500', function(req, res){
     throw new Error('This is a 500 Error');
 });
 
 
-server.get('/node_modules/jquery-file-upload-middleware/public/files/*', function(req, res){
+app.get('/node_modules/jquery-file-upload-middleware/public/files/*', function(req, res){
     var filePath = '.' + req.url;
     
     var extname = path.extname(filePath);
@@ -202,20 +204,20 @@ server.get('/node_modules/jquery-file-upload-middleware/public/files/*', functio
 });
 
 //get a array of uploaded js files which represent the basis for our future work
-server.get('/api/currentfiles', filemanager.GetUserFiles);
+app.get('/api/currentfiles', filemanager.GetUserFiles);
 
 //get the locales as json array of locale objects
-server.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales);
+app.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales);
 
 //
-server.post('/api/deleteUserFile',express.bodyParser(), filemanager.DeleteUserFile);
+app.post('/api/deleteUserFile',express.bodyParser(), filemanager.DeleteUserFile);
 
-server.get('/vendor/*', staticRequest);
-server.get('/app/*',  staticRequest);
-server.get('/app/img',  staticRequest);
-server.get('/main.html', ensureAuthenticated,  staticRequest);
-server.get('/static/*',  staticRequest);
-server.get('/assets/*',  staticRequest);
+app.get('/vendor/*', staticRequest);
+app.get('/app/*',  staticRequest);
+app.get('/app/img',  staticRequest);
+app.get('/main.html', ensureAuthenticated,  staticRequest);
+app.get('/static/*',  staticRequest);
+app.get('/assets/*',  staticRequest);
 
 
 function staticRequest (req, res){
@@ -270,11 +272,11 @@ function staticRequest (req, res){
 
 
 
-server.get('/login', function(req, res){
-  res.render('login', { user: req.user, message: req.flash('error') });
+app.get('/login', function(req, res){
+  res.render('login', { user: req.user, message: 'none' });
 });
 
-server.post('/upload', uploadfoo);
+app.post('/upload', uploadfoo);
 
 
 function uploadfoo (req , res){
@@ -282,8 +284,8 @@ function uploadfoo (req , res){
     var userFolder  = filemanager.GetUserFolderName(req);
 
     upload({    
-                    uploadUrl: __dirname + '/node_modules/jquery-file-upload-middleware/public/files/' + userFolder,
-                    uploadDir: __dirname + '/node_modules/jquery-file-upload-middleware/public/files/' + userFolder,
+                    uploadUrl: __dirname + '/files/' + userFolder,
+                    uploadDir: __dirname + '/files/' + userFolder,
                     tmpDir: '/tmp',
                     maxPostSize: 11000000000, // 11 GB
                     minFileSize: 1,
@@ -313,7 +315,7 @@ function uploadfoo (req , res){
 //   which, in this example, will redirect the user to the home page.
 //
 //   curl -v -d "username=bob&password=secret" http://127.0.0.1:3000/login
-server.post('/login', express.bodyParser(),
+app.post('/login', express.bodyParser(),
   passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
   function(req, res) {
     res.redirect('/');
@@ -338,7 +340,7 @@ app.post('/login', function(req, res, next) {
 });
 */
 
-server.get('/logout', function(req, res){
+app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
 });
