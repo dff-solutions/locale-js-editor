@@ -28,7 +28,7 @@ function(app,LocaleEdit,jquery) {
 
                         jquery('ul.nav li').removeClass('active');
                         jquery('ul.nav a[href="#overview"]').parent().addClass('active');                  
-                        jquery('#loadIndicator').hide();
+                        jquery('#loadIndicator').fadeOut('slow');
                       });
               });  
     },
@@ -42,7 +42,7 @@ function(app,LocaleEdit,jquery) {
                     .done(function(){
                         jquery('ul.nav li').removeClass('active');
                         jquery('ul.nav a[href="#index"]').parent().addClass('active');              
-                        jquery('#loadIndicator').hide();
+                        jquery('#loadIndicator').fadeOut('slow');
                     });
             });
     },
@@ -58,7 +58,6 @@ function(app,LocaleEdit,jquery) {
             .done(function(){
                         jquery('ul.nav li').removeClass('active');
                         jquery('ul.nav a[href="#edit"]').parent().addClass('active');   
-                        jquery('#loadIndicator').hide();                        
             }).done(function(){
                         collection.fetch();  
             });     

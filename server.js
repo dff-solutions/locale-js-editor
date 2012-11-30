@@ -83,7 +83,7 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view options', { layout: false });  
   app.set('view engine', 'ejs');
-//  app.use(express.logger());
+  app.use(express.logger());
   app.use(express.cookieParser());
   //app.use(express.bodyParser());
   app.use(express.methodOverride());
@@ -160,15 +160,13 @@ app.get('/files/*', function(req, res){
         }
         else {
 
-        console.log('---');
-        console.log(req.url);
-        console.log('---');
             res.writeHead(404);
             res.end();
             //throw new NotFound;
         }
     });
 });
+
 
 //get a array of uploaded js files which represent the basis for our future work
 app.get('/api/currentfiles', filemanager.GetUserFiles);
@@ -188,11 +186,8 @@ app.get('/assets/*',  staticRequest);
 
 
 function staticRequest (req, res){
-                        console.log(req.url);
     var filePath = '.' + req.url.split('?')[0];
-    
     var extname = path.extname(filePath);
-    console.log(extname);
     var contentType = 'text/html';
     switch (extname) {
         case '.js':
@@ -225,9 +220,6 @@ function staticRequest (req, res){
                         res.end();
                     }); 
                 }else{
-                    console.log('---');
-                    console.log(req.url);
-                    console.log('---');
                     res.writeHead(404);
                     res.end();
                     //throw new NotFound;                    

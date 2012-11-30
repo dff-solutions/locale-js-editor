@@ -74,8 +74,23 @@ exports.GetUserFiles = function(req, res) {
 
 
 exports.SaveLocales = function(req, res) {
-	var data = req.body.Locales;
+
+	var data = "",
+		jsonData  ;	
+	req.addListener('data', function(chunk) { data += chunk; });
+        req.addListener('end', function() {
+            jsonData = JSON.parse(data);
+            saveLocaleJsonToFiles(jsonData,function(){
+	            res.writeHead(200, {'content-type': 'text/plain' });
+	            res.end()            	
+            })
+        });
+};
+
+function saveLocaleJsonToFiles = function(data, callback){
+
 	
+	callback();
 }
 
 exports.DeleteUserFile  = function(req, res) {

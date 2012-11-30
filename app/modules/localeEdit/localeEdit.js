@@ -72,6 +72,7 @@ function(app, jquery, Views ) {
     deferred: Function.constructor.prototype,
     fetchSuccess: function (collection, response) {
         collection.deferred.resolve();
+         jquery('#loadIndicator').fadeOut('slow');
     },
     fetchError: function (collection, response) {
         throw new Error("getworkinglocales fetch did get collection from API");
@@ -84,16 +85,15 @@ function(app, jquery, Views ) {
 
   Localeedit.SaveLocales = function(data) {
     var dataAsJson = JSON.stringify(data);
-    console.log(dataAsJson);
-
+    jquery('#loadIndicator').show();
     $.ajax({
                 url: '/api/savelocales',
                 type: 'POST',
-                data: {
-                      Locales:  dataAsJson  
-                }
+                contentType: 'text/json',
+                data: dataAsJson 
 
             }).success(function(data) {
+                jquery('#loadIndicator').fadeOut('slow');
                 console.log('Saved successfully');
             })
 
