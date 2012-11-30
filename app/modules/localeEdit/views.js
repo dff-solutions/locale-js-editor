@@ -93,7 +93,7 @@ Views.EditList = Backbone.View.extend({
       this.collection.filter(function(model) {
         return model.get("LocaleKey").indexOf(searchTerm) != -1;
       });
-      this.collection.reset()
+      this.collection.reset();
     },  
     save: function() {          
         //localStorage.setItem(this.name, JSON.stringify(this.data)); 
