@@ -126,6 +126,17 @@ function(app, jquery, Views ) {
                     }).appendTo($fileWrapper);
                     $text.html('Größe: ' +  value.size);                    
 
+                  var $btnDownlaod = $('<button>', {
+                        type : "button",
+                        'class' : "pull-right btn btn-primary",
+                         'data-loading-text' : "downloading"
+                    }).appendTo($fileWrapper);
+                    $btnDownlaod.html('Download'); 
+
+                    $btnDownlaod.click(function(){
+                        window.open(value.url, 'Download ' +  value.name);
+                    });
+
                     var $btnDelete = $('<button>', {
                         type : "button",
                         'class' : "pull-right btn btn-primary",

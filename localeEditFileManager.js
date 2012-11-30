@@ -61,7 +61,7 @@ exports.GetUserFiles = function(req, res) {
 	        res.write(JSON.stringify(
 						        	jsOnlyFilesWithMetaInfo.map(function (file)
 						        	{
-						        		return { url: '/files/' +  file.Name,
+						        		return { url: '/files/user_' + req.session.passport.user + '/' + file.Name,
 						        				 name: file.Name,
 						        				 lastChange: file.mtime,
 						        				 size: file.size,
