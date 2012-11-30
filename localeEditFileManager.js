@@ -2,7 +2,7 @@ var fs = require('fs')
    , path = require('path')
    , vm = require('vm')
    , util = require('util')
-   , linq  = require('linq')   
+   , mv = require('mv')
    , sandbox = {
       Intranet: {
       	Locale: {},
@@ -51,24 +51,53 @@ exports.GetUserFiles = function(req, res) {
     console.log('Retrieving UserFiles: ');
 	fs.readdir(dirName, function(err, files){
 
-		var jsOnlyFiles = [];
 
+
+		var jsOnlyFiles = [];
+		var jsOnlyFilesWithMetaInfo = [];		
+
+		var doResponse = function() {
+	        res.writeHead(200, { 'Content-Type': 'application/json' });
+	        res.write(JSON.stringify(
+						        	jsOnlyFilesWithMetaInfo.map(function (file)
+						        	{
+						        		return { url: '/files/' +  file.Name,
+						        				 name: file.Name,
+						        				 lastChange: file.mtime,
+						        				 size: file.size,
+						        				 deleteUrl: req.originalUrl +  file }; })
+						        	));
+			res.end();
+		};
+
+		// nur die js Dateien ohne Ordner
 		for (var i in files) {
 		  var file = files[i];
 		  if(file.indexOf('js') !==  -1 ){
-		  	jsOnlyFiles.push(file);
+		  		jsOnlyFiles.push(file);
 		  }
 		}
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.write(JSON.stringify(
-					        	jsOnlyFiles.map(function (file)
-					        	{
-					        		return { url: '/files/' +  file,
-					        				 name: file,
-					        				 deleteUrl: req.originalUrl +  file }; })
-					        	));
-					        		res.end();
+		// anreichern mit meta infos
+		for (var i in jsOnlyFiles) {
+			var file = jsOnlyFiles[i];
+			var statsDone = 0;
+
+			fs.stat(dirName+'/' + file, function(err, stats){
+
+				jsOnlyFilesWithMetaInfo.push({
+					  			Name: file,
+					  			mtime: stats.mtime,
+					  			size: stats.size
+					  		});
+				statsDone +=1;
+				if(statsDone === jsOnlyFiles.length){
+					doResponse();
+				}
+			});
+
+
+		}
 	});
 };
 
@@ -76,22 +105,20 @@ exports.GetUserFiles = function(req, res) {
 exports.SaveLocales = function(req, res) {
 
 	var data = "",
-		jsonData  ;	
+		jsonData ,	
+		dirName = getUserFolder(req); 
+
 	req.addListener('data', function(chunk) { data += chunk; });
         req.addListener('end', function() {
             jsonData = JSON.parse(data);
-            saveLocaleJsonToFiles(jsonData,function(){
+            saveLocaleJsonToFiles(jsonData, dirName, function(){
 	            res.writeHead(200, {'content-type': 'text/plain' });
 	            res.end()            	
             })
         });
 };
 
-function saveLocaleJsonToFiles = function(data, callback){
 
-	
-	callback();
-}
 
 exports.DeleteUserFile  = function(req, res) {
 	var dirName = getUserFolder(req);
@@ -164,33 +191,203 @@ function parseLocaleJs (array) {
 function toMultiLocaleItem (Locales){
 
 	var multiLocaleList = {};
+	var existingLanguages = [];
+	var allKeys = {};
+	var currentValue = "";
+	// SaveAll Languages
+	for (var language in Locales) {
+	   if(existingLanguages.indexOf(language) == -1 ){
+	   		existingLanguages.push(language);
+	   }		
+	}
 
 	for (var language in Locales) {
 	   var lang = Locales[language];
-	   for (var prop in lang) {
-	   	  var existing = multiLocaleList[prop] || {Values: []};
+	   for (var key in lang) {
+	   	  var existing = multiLocaleList[key] || {Values: []};
+	   	  currentValue = lang[key].toString();
 	   	  var localValue = { Language: language,
-	   	  	                 Value: lang[prop].toString()
+	   	  	                 Value: currentValue,
+	   	  	                 IsFunction: currentValue.substring(0,10).indexOf('function') != -1
 	   	  					  }
 	   	  existing.Values.push(localValue);
-		  multiLocaleList[prop] = existing;
+		  multiLocaleList[key] = existing;
 	   }
 	}
 
 	var multiLocaleArray = [];
-	for (var prop in multiLocaleList) {
-		var v = multiLocaleList[prop];
+	//Object Literal zu array umwandeln
+	// prüfen ob alle schlüssel in allen sprachen vorhanden sind
+	for (var key in multiLocaleList) {
+		var v = multiLocaleList[key];
+
+		
+		if(v.Values.length !== existingLanguages.length) 	{// es scheint als ob sprachen fehlen
+
+			for (var l in existingLanguages)
+			{
+				var exists = false;
+				var lang = existingLanguages[l];
+				for (var value in v.Values) {
+					var currentValue = v.Values[value];
+
+					if(currentValue.Language == lang) {
+						exists = true;
+					}
+				}
+				if(!exists) {
+					v.Values.push({
+						Language: lang,
+						Value: "!UNDEFINED-LOCALE"
+					})
+				}
+			}
+		}
+
 
 		multiLocaleArray.push({
-			LocaleKey: prop,
+			LocaleKey: key,
 			LocaleValues: v.Values
 		});
 	}
 
 	return multiLocaleArray;
-
 }
 
+
+function moveExistingFilesToBackUpFolder(folder, callback){
+
+	fs.readdir(folder, function(err, files){
+
+		var fileOnlyNames = [];
+		
+		for (var i in files) {
+
+		    var fileName = folder + '/' + files[i];
+			var stats = fs.lstatSync(fileName);
+
+			if (stats.isFile()) {
+				fileOnlyNames.push(
+				{
+					Path:fileName,
+					Name:files[i]
+				});
+			}
+		}
+
+		console.log('found the following files :');
+		console.log(fileOnlyNames);
+		var done = 0;
+
+		var d = new Date();
+		var outPutFolder = folder+ '/' +	d.getFullYear().toString()+ d.getMonth()+ d.getDay()+ d.getHours()+ d.getMinutes() + + d.getSeconds()+ "_backUp";
+
+		fs.mkdir(outPutFolder, function (err) {
+			for (var i in fileOnlyNames) {
+
+			    var fname = fileOnlyNames[i];
+
+				console.log('-----------------------------------');
+				console.log('moving : ' +fname.Path);
+				console.log('to  : ' +outPutFolder+ '/' +fname.Name);
+				console.log('-----------------------------------');
+
+				// var is = fs.createReadStream(fname.Path)
+				// var os = fs.createWriteStream(outPutFolder+ '/' +fname.Name);
+
+				// is.pipe(os);
+			 //    fs.unlinkSync(fname.Path);
+
+			    mv(fname.Path, outPutFolder+ '/' +fname.Name, function(err) {
+				  // done. it tried fs.rename first, and then falls back to
+				  // piping the source file to the dest file and then unlinking
+				  // the source file.
+				});
+
+			}
+			callback();
+		});
+
+	});
+}
+
+function saveLocaleJsonToFiles (data, dirName, callback){
+
+	var locales = {};
+
+	var partialFileName = "Intranet.Locale.";
+
+	for( var i = 0 ; i < data.length; i++){
+		var obj = data[i];
+		var localeKey = obj.LocaleKey;
+		for( var j = 0 ; j < obj.LocaleValues.length; j++)
+		{
+			var currentValue = obj.LocaleValues[j].Value;
+			var currentLanguage = obj.LocaleValues[j].Language;
+			locales[currentLanguage] = locales[currentLanguage] || {};
+			locales[currentLanguage][localeKey] = currentValue;
+		};
+	};
+
+	function procceed(){
+		var outputString =""
+
+		for (var lang in locales)
+		{
+			var current = locales[lang];
+
+			outputString = "";
+			outputString += "Intranet.namespace('Intranet.Locale."+ lang + "');\r\n";
+			outputString += "Intranet.Locale."+ lang + " = {\r\n";
+
+			for (var k in current)
+			{		
+				var localeValue = current[k];
+				var hasSingleQuoteInside = localeValue.indexOf('\'') != -1;
+
+
+				if(localeValue.substring(0,10).indexOf('function') == -1)
+				{
+					// Wenn der String single qoutes innerhalb hat, wert in double qoutes einpassen
+					// ansonsten singleqoutes
+					if(hasSingleQuoteInside){
+						outputString += k + ": \"" + localeValue.replace("\n","\\n") + "\",\r\n";									
+					}else{
+						outputString += k + ": '" + localeValue.replace("\n","\\n") + "',\r\n";									
+					}
+
+				}else{
+					// wir haben eine function! nicht in qoutes einpassen!!!
+					outputString += k + ": " + localeValue + ",\r\n";			
+				}
+
+			}
+
+			// remove last comma
+			outputString = outputString.substring(0, outputString.length - 3) + "\r\n";
+			outputString += " };";		
+
+
+			var filename = dirName + '/'+ partialFileName + lang + ".js";
+			fs.writeFile(filename, outputString, function(err) {
+			    if(err) {
+			        console.log(err);
+			    } else {
+			        console.log("The file was saved! : "  + filename);
+			    }
+			}); 
+		}		
+		callback();
+	}
+
+	// save a backUp
+	moveExistingFilesToBackUpFolder(dirName,procceed);
+
+
+
+
+
+}
 exports.GetCurrentWorkingLocales = function(req, res) {
 	var dirName = getUserFolder(req);
 	var locales = [];
@@ -214,12 +411,34 @@ exports.GetCurrentWorkingLocales = function(req, res) {
 		var done = 0;
 		for (var i in fileOnlyNames) {
 
-		    var fileName = dirName + '/' + files[i];
-			var stats = fs.lstatSync(fileName);
+		    var fileName = fileOnlyNames[i];
 
 
 				fs.readFile(fileName, function handleFile(err, data) {
+						
+						// var ar = data.split('\n');
+						// var part = '';
+						// var key = '';
+
+						// for(var i = 0; i < length; i ++) {
+						// 	var curent = ar[i];
+						// 	var indexofColon = current.indexOf(':');
+						// 	if(indexofColon !== -1) {
+						// 		key = current.substring(0, indexofColon -1 );
+						// 		part = current.substring(indexofColon+1);l
+						// 	}else{
+
+						// 	}
+						// }
+
+						intranetLocaleContext = vm.createContext(sandbox);
 					    vm.runInContext(data, intranetLocaleContext);
+
+					    /*
+					     {DE:{ Key1 : 'Value',
+						       Key2 : 'Value'
+						}}*/		 
+
 						multiLocaleItem = toMultiLocaleItem(intranetLocaleContext.Intranet.Locale);	
 						done += 1;
 

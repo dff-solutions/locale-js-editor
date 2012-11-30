@@ -13,6 +13,7 @@
       "passport-local": "*",
       "ejs": "*",
       "jquery-file-upload-middleware": "*",
-      "linq": ""
+      "node-linq": "*y",
+      "mv": "*"
   }
 }

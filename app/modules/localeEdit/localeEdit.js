@@ -27,7 +27,8 @@ function(app, jquery, Views ) {
   Localeedit.ItemModel = Backbone.Model.extend({
            defaults: {
            Language:  'XX',
-           Value: 'Foo'
+           Value: 'Foo',
+           IsFunction: false
        },
        initialize: function() { 
             console.log('new Locale ItemModel');
@@ -113,7 +114,17 @@ function(app, jquery, Views ) {
                     var $text = $('<span>', {
                         'class' : "label label-info pull-left"
                     }).appendTo($fileWrapper);
-                    $text.html(value.name);
+                    $text.html('Name: ' +  value.name);
+
+                    var $text = $('<span>', {
+                        'class' : "label label-info pull-left"
+                    }).appendTo($fileWrapper);
+                    $text.html('Änderungsdatum: ' +  value.lastChange);
+
+                    var $text = $('<span>', {
+                        'class' : "label label-info pull-left"
+                    }).appendTo($fileWrapper);
+                    $text.html('Größe: ' +  value.size);                    
 
                     var $btnDelete = $('<button>', {
                         type : "button",
