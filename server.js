@@ -181,6 +181,7 @@ app.post('/api/savelocales',express.bodyParser(), filemanager.SaveLocales);
 app.get('/vendor/*', staticRequest);
 app.get('/app/*',  staticRequest);
 app.get('/app/img',  staticRequest);
+app.get('/index.html', ensureAuthenticated,  staticRequest);
 app.get('/main.html', ensureAuthenticated,  staticRequest);
 app.get('/static/*',  staticRequest);
 app.get('/assets/*',  staticRequest);
@@ -239,7 +240,7 @@ function staticRequest (req, res){
 
 
 app.get('/login', function(req, res){
-  res.render('login', { user: req.user, message: 'Locale Editor Please login!' });
+  res.render('login', { user: req.user, message: '' });
 });
 
 app.post('/upload', uploadHandler);

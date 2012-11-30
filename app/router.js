@@ -16,62 +16,53 @@ function(app,LocaleEdit,jquery) {
       "edit": "edit",            
       "overview": "overview"
     },
-
     overview: function() {
+            jquery('#loadIndicator').show();
             app.useLayout('main').setViews({
 
-                    '#main': new LocaleEdit.Views.Overview()
+                    '#stage': new LocaleEdit.Views.Overview()
              }).render()
               .done(function() {
                   jquery.when(LocaleEdit.InitFileListUi())
                         .done(function(){
 
-                          jquery('ul.nav li').removeClass('active');
+                        jquery('ul.nav li').removeClass('active');
                         jquery('ul.nav a[href="#overview"]').parent().addClass('active');                  
+                        jquery('#loadIndicator').hide();
                       });
               });  
-
-
     },
-
     index: function() {
-
+            jquery('#loadIndicator').show();
             app.useLayout('main').setViews({
-
-                    '#main': new LocaleEdit.Views.Upload()
+                    '#stage': new LocaleEdit.Views.Upload()
              }).render()
             .done(function(){
               jquery.when(LocaleEdit.InitUi())
                     .done(function(){
                         jquery('ul.nav li').removeClass('active');
                         jquery('ul.nav a[href="#index"]').parent().addClass('active');              
+                        jquery('#loadIndicator').hide();
                     });
-              
-
             });
-
-
     },
     edit: function() {
-
+            jquery('#loadIndicator').show();
             var collection = new LocaleEdit.Collection();
             app.useLayout('main').setViews({
                     // Attach the bar View into the content View
-                    '#main': new LocaleEdit.Views.EditList({
+                    '#stage': new LocaleEdit.Views.EditList({
                             collection: collection
                     })
              }).render()
             .done(function(){
                         jquery('ul.nav li').removeClass('active');
                         jquery('ul.nav a[href="#edit"]').parent().addClass('active');   
+                        jquery('#loadIndicator').hide();                        
             }).done(function(){
                         collection.fetch();  
             });     
-
-
     }    
-
-
   });
 
 

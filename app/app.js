@@ -68,8 +68,8 @@ function($, _, Backbone) {
       });
 
       // Insert into the DOM.
-      $('#main').empty().append(layout.el);
-      $('#main').fadeIn('slow');
+      $('#stage').empty().append(layout.el);
+      $('#stage').fadeIn('slow');
 
       // Render the layout.
       layout.render();
