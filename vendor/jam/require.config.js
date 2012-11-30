@@ -63,12 +63,14 @@ var jam = {
             "name": "bootstrap",
             "location": "../vendor/jam",
             "main": "bootstrap.min.js"
-        }
-
-        ,{
+        },{
             "name": "bootstrap-image-gallery",
             "location": "../vendor/jam",
             "main": "bootstrap-image-gallery.min.js"
+        },{
+            "name": "LocaleEdit",
+            "location": "../app/modules/localeEdit",
+            "main": "localeEdit.js"
         }
 
 

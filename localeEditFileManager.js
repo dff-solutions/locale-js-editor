@@ -73,6 +73,11 @@ exports.GetUserFiles = function(req, res) {
 };
 
 
+exports.SaveLocales = function(req, res) {
+	var data = req.body.Locales;
+	
+}
+
 exports.DeleteUserFile  = function(req, res) {
 	var dirName = getUserFolder(req);
     console.log('Retrieving UserFiles: ');

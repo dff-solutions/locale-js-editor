@@ -1,10 +1,10 @@
 define([
   'app',
-  // Libs
+  'LocaleEdit',
   'backbone'
 ],
 
-function(app, Backbone) {
+function(app, LocaleEdit, Backbone) {
 
   var Views = {};
 
@@ -96,8 +96,8 @@ Views.EditList = Backbone.View.extend({
       this.collection.reset()
     },  
     save: function() {          
-        //localStorage.setItem(this.name, JSON.stringify(this.data));
-        console.log(JSON.stringify(this.collection);
+        //localStorage.setItem(this.name, JSON.stringify(this.data)); 
+        LocaleEdit.SaveLocales(this.collection);
     },
     renderList : function(task){
       console.log(task);

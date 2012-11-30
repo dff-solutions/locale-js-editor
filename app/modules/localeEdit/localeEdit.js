@@ -82,6 +82,22 @@ function(app, jquery, Views ) {
 // Default views
   Localeedit.Views = Views;
 
+  Localeedit.SaveLocales = function(data) {
+    var dataAsJson = JSON.stringify(data);
+    console.log(dataAsJson);
+
+    $.ajax({
+                url: '/api/savelocales',
+                type: 'POST',
+                data: {
+                      Locales:  dataAsJson  
+                }
+
+            }).success(function(data) {
+                console.log('Saved successfully');
+            })
+
+  };
 
   Localeedit.InitFileListUi = function() {
         $('.file-list-wrapper').html('');

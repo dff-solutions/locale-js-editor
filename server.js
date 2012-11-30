@@ -175,6 +175,8 @@ app.get('/api/currentfiles', filemanager.GetUserFiles);
 //get the locales as json array of locale objects
 app.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales);
 app.post('/api/deleteUserFile',express.bodyParser(), filemanager.DeleteUserFile);
+app.post('/api/savelocales',express.bodyParser(), filemanager.SaveLocales);
+
 
 app.get('/vendor/*', staticRequest);
 app.get('/app/*',  staticRequest);
