@@ -190,7 +190,7 @@ Views.EditList = Backbone.View.extend({
       mediator.Subscribe('goToStart', this.goToStart, {}, this)      
       mediator.Subscribe('goToEnd', this.goToEnd, {}, this)            
       
-      this.pageSize = 50;
+      this.pageSize = 3;
       this.currentPage = 1;
     }    
 

@@ -1,14 +1,24 @@
 
 <div class="container">
 		<div class="row" style="padding: 0 0 0 40px;"> 
-		<input id="keySearchTask" class="input-medium" type="text"  placeholder="KEY" value='<%= keySearchterm  %>'></input>
-		<input class="input-medium" type="text"  placeholder="LANGUAGE"></input>
-		<input class="input-medium" type="text"  placeholder="VALUE"></input>
+
+			<div class="pull-left">
+				<input id="keySearchTask" class="input-medium" type="text"  placeholder="KEY" value='<%= keySearchterm  %>'></input>
+				<input class="input-medium" type="text"  placeholder="LANGUAGE"></input>
+				<input class="input-medium" type="text"  placeholder="VALUE"></input>
+			</div>
+
+			<div class="pull-right">
+				<span id="prevPage" class="label">prev</span>
+				<span id="nextPage" class="label">next</span>
+
+				<span id="gotoStart" class="label">Start</span>
+				<span id="gotoEnd" class="label">Ende</span>		
+			</div>
+			
+			<div class="clearfix"></div>
+
 		</diV>
 
-		<span id="prevPage" class="label">prev</span>
-		<span id="nextPage" class="label">next</span>
 
-		<span id="gotoStart" class="label">Start</span>
-		<span id="gotoEnd" class="label">Ende</span>		
 </div>
