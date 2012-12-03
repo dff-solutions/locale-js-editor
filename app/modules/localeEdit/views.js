@@ -54,7 +54,21 @@ function(app, LocaleEdit,  Backbone) {
       var keySearchterm = $("#keySearchTask").val();
       mediator.Publish('keySearch', keySearchterm);
         return this;
-    },    
+    },
+    pageChanged : function(page){
+      this.currentPage = page;
+      this.render();
+    },
+    data: function() {
+      return {
+        currentpage: this.currentPage
+      };
+    },
+    initialize: function(){
+      this.currentPage = 1;
+      mediator.Subscribe('pageChanged', this.pageChanged, {}, this)
+
+    },
     template: 'app/templates/localeedit/filter',
     manage: true
    });
@@ -116,7 +130,8 @@ Views.EditList = Backbone.View.extend({
 
     data: function() {
       return {
-        count: this.collection.length
+        count: this.collection.length,
+        currentpage: this.currentPage
       };
     },
 
@@ -167,18 +182,22 @@ Views.EditList = Backbone.View.extend({
         return;
       };
       this.currentPage -= 1;
+      mediator.Publish('pageChanged', this.currentPage);
       this.render();
     },    
     nextPage: function(){
       this.currentPage += 1;
+      mediator.Publish('pageChanged', this.currentPage);      
       this.render();      
     },
     goToStart: function(){
       this.currentPage = 1;
+      mediator.Publish('pageChanged', this.currentPage);      
       this.render();      
     },
     goToEnd: function(){
       this.currentPage = (this.collection.length / this.pageSize) +1;
+      mediator.Publish('pageChanged', this.currentPage);      
       this.render();      
     },
     initialize: function() {
