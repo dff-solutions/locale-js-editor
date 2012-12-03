@@ -63,6 +63,9 @@ function(app, jquery, Views ) {
             return pattern.test(data.get("LocaleKey"));
         }));
     },
+    comparator: function(item) {
+        return item.get('LocaleKey');
+    },    
     initialize: function () {
         this.fetch({
             success: this.fetchSuccess,

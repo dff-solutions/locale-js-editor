@@ -1,12 +1,14 @@
 define([
   'app',
   'LocaleEdit',
-  'backbone'
+  'backbone',
+  'Mediator'
 ],
 
-function(app, LocaleEdit, Backbone) {
+function(app, LocaleEdit,  Backbone) {
 
   var Views = {};
+  var mediator = new Mediator();
 
   Views.Upload = Backbone.View.extend({
     template: 'app/templates/localeedit/upload',
@@ -19,6 +21,18 @@ function(app, LocaleEdit, Backbone) {
     manage: true
    });
 
+  Views.EditFilter = Backbone.View.extend({
+        events: {
+      "keyup #keySearchTask" : "KeySearch",
+    },
+    KeySearch: function(e){
+      var keySearchterm = $("#keySearchTask").val();
+      mediator.Publish('keySearch', keySearchterm);
+        return this;
+    },    
+    template: 'app/templates/localeedit/filter',
+    manage: true
+   });
 
   Views.EditKeyValueItem = Backbone.View.extend({
     template: 'app/templates/localeedit/editKeyValueItem',
@@ -75,70 +89,60 @@ Views.EditList = Backbone.View.extend({
     manage: true,
        className: 'container',
 
-    dataSearchTerms : {
-        keySearchterm :'FooSearch'
-    },
     data: function() {
       return {
-        count: this.collection.length,
-        keySearchterm:   this.dataSearchTerms.keySearchterm
+        count: this.collection.length
       };
     },
 
     events: {
-      "keyup #keySearchTask" : "search",
       "click #SaveBtn" : "save"
       //,
       //"change #taskSorting":"sorts"
     },
-    search: function(e){
-      this.dataSearchTerms.keySearchterm = $("#keySearchTask").val();
+    search: function(term){
       var collToUse = this.wholeCollecxtion || this.collection;
-      this.renderList(collToUse.search(this.dataSearchTerms.keySearchterm));
-      // this.collection.filter(function(model) {
-      //   return model.get("LocaleKey").indexOf(searchTerm) != -1;
-      // });
-      // this.collection.reset();
+      this.renderList(collToUse.search(term));
+
+
     },  
     save: function() {          
         //localStorage.setItem(this.name, JSON.stringify(this.data)); 
         LocaleEdit.SaveLocales(this.collection);
     },
-    renderList : function(task){
+    renderList : function(filteredCollection){
+
      if(this.wholeCollecxtion === undefined)
      {
         this.wholeCollecxtion =  this.collection;
      };
-     this.collection = task;
+     this.collection = filteredCollection;
      this.render();
-      console.log(task);
     },    
 
     beforeRender: function() {
-      //var active = this.options.commits.repo;
 
+      var max = 100;
+      var count = 0;
       this.collection.each(function(locale) {
-        // if (locale.get("name") === active) {
-        //   app.active = repo;
-        // }
-
-        this.insertView("div.localelistitems", new Views.EditItem({
-          model: locale
-        }));
+        count++;
+        //if(count < max) {
+          this.insertView("div.localelistitems", new Views.EditItem({
+            model: locale
+          }));
+        //}
       }, this);
     },
 
     cleanup: function() {
-      this.collection.off(null, null, this);
+      //this.collection.off(null, null, this);
     },
 
     initialize: function() {
       this.collection.on("reset", this.render, this);
-      this.searchterm ="";
-      this.collection.on("fetch", function() {
-        this.$("div.loading").html("<img src='/app/img/loading.gif'>");
-      }, this);
-      //this.collection.fetch();
+
+      mediator.Subscribe('keySearch', this.search, {}, this)
+
     }    
 
   });  
@@ -146,3 +150,5 @@ Views.EditList = Backbone.View.extend({
    return Views;
 
 });
+
+

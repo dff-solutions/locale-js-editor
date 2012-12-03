@@ -71,6 +71,10 @@ var jam = {
             "name": "LocaleEdit",
             "location": "../app/modules/localeEdit",
             "main": "localeEdit.js"
+        },{
+            "name": "Mediator",
+            "location": "../vendor/jam",
+            "main": "mediator.js"
         }
 
 

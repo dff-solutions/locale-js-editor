@@ -49,11 +49,11 @@ function(app,LocaleEdit,jquery) {
     edit: function() {
             jquery('#loadIndicator').show();
             var collection = new LocaleEdit.Collection();
-            app.useLayout('main').setViews({
-                    // Attach the bar View into the content View
-                    '#stage': new LocaleEdit.Views.EditList({
-                            collection: collection
-                    })
+            app.useLayout('edit').setViews({
+                  "#filter-wrapper": new LocaleEdit.Views.EditFilter(),
+                  "#editItems-wrapper": new LocaleEdit.Views.EditList({
+                                        collection: collection
+                                      })
              }).render()
             .done(function(){
                         jquery('ul.nav li').removeClass('active');

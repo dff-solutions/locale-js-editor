@@ -181,6 +181,7 @@ app.get('/app/*',  staticRequest);
 app.get('/app/img',  staticRequest);
 app.get('/index.html', ensureAuthenticated,  staticRequest);
 app.get('/main.html', ensureAuthenticated,  staticRequest);
+app.get('/edit.html', ensureAuthenticated,  staticRequest);
 app.get('/static/*',  staticRequest);
 app.get('/assets/*',  staticRequest);
 

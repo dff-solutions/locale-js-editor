@@ -1,0 +1,53 @@
+
+<ul class="nav nav-pills">  
+       <li class="active"><a href="#index">Upload</a></li>  
+       <li><a href="#overview">Übersicht</a></li>  
+       <li><a href="#edit">Editieren</a></li>         
+       <li class="pull-right" style="margin: 0 60px 0 0;"><a href="logout" data-bypass>LogOut</a></li>                
+<!--        <li class="dropdown">  
+         <a class="dropdown-toggle" data-toggle="dropdown" href="#">FrontEnd<b class="caret"></b></a>  
+         <ul class="dropdown-menu">  
+           <li><a href="#">Twitter Bootstrap</a></li>  
+           <li><a href="#">Google Plus API</a></li>  
+           <li><a href="#">HTML5</a></li>  
+           <li class="divider"></li>  
+           <li><a href="#">Examples</a></li>  
+         </ul>  
+       </li>   -->
+
+     </ul>  
+ </li>  
+ </ul>  
+
+
+</header>  
+
+  <div role="main" id="stage">
+  <div id="filter-wrapper">
+    <div class="container">
+        <div class="row" style="padding: 0 0 0 40px;"> 
+        <input id="keySearchTask" class="input-medium" type="text"  placeholder="KEY" value='<%= keySearchterm  %>'></input>
+        <input class="input-medium" type="text"  placeholder="LANGUAGE"></input>
+        <input class="input-medium" type="text"  placeholder="VALUE"></input>
+        </diV>
+    </div>
+  </div>
+  <div id="editItems-wrapper">
+
+  </div>  
+  </div>
+
+  <!-- Application source. -->
+
+  <!--(if target release)>
+  <script data-main="/app/config" src="source.min.js"></script>
+  <!(endif)-->
+
+  <!--(if target debug)>
+  <script data-main="/app/config" src="source.js"></script>
+  <!(endif)-->
+
+  <!--(if target dummy)><!-->
+  <script data-main="/app/config" src="/vendor/js/libs/require.js"></script>
+  <!--<!(endif)-->
+
