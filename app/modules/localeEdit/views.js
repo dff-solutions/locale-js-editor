@@ -75,9 +75,13 @@ Views.EditList = Backbone.View.extend({
     manage: true,
        className: 'container',
 
+    dataSearchTerms : {
+        keySearchterm :'FooSearch'
+    },
     data: function() {
       return {
-        count: this.collection.length 
+        count: this.collection.length,
+        keySearchterm:   this.dataSearchTerms.keySearchterm
       };
     },
 
@@ -88,18 +92,25 @@ Views.EditList = Backbone.View.extend({
       //"change #taskSorting":"sorts"
     },
     search: function(e){
-      var searchTerm = $("#keySearchTask").val();
-      //this.renderList(this.collection.search(letters));
-      this.collection.filter(function(model) {
-        return model.get("LocaleKey").indexOf(searchTerm) != -1;
-      });
-      this.collection.reset();
+      this.dataSearchTerms.keySearchterm = $("#keySearchTask").val();
+      var collToUse = this.wholeCollecxtion || this.collection;
+      this.renderList(collToUse.search(this.dataSearchTerms.keySearchterm));
+      // this.collection.filter(function(model) {
+      //   return model.get("LocaleKey").indexOf(searchTerm) != -1;
+      // });
+      // this.collection.reset();
     },  
     save: function() {          
         //localStorage.setItem(this.name, JSON.stringify(this.data)); 
         LocaleEdit.SaveLocales(this.collection);
     },
     renderList : function(task){
+     if(this.wholeCollecxtion === undefined)
+     {
+        this.wholeCollecxtion =  this.collection;
+     };
+     this.collection = task;
+     this.render();
       console.log(task);
     },    
 
@@ -123,7 +134,7 @@ Views.EditList = Backbone.View.extend({
 
     initialize: function() {
       this.collection.on("reset", this.render, this);
-
+      this.searchterm ="";
       this.collection.on("fetch", function() {
         this.$("div.loading").html("<img src='/app/img/loading.gif'>");
       }, this);

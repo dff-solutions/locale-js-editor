@@ -6,7 +6,7 @@ DATETIMESTRING: function (x) {
 DATESTRING: function (x) {
         return this.localizeDateString(x);
     },
-REPORTING: 'Reporting',
+REPORTING: 'la reReporting',
 DASHBOARD: 'Tableau de bord',
 TOURLIST: 'Tour-liste',
 TOURCAT: 'Tour',

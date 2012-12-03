@@ -2,7 +2,7 @@ var fs = require('fs')
    , path = require('path')
    , vm = require('vm')
    , util = require('util')
-   , mv = require('mv')
+//   , mv = require('mv')
    , sandbox = {
       Intranet: {
       	Locale: {},
@@ -298,11 +298,11 @@ function moveExistingFilesToBackUpFolder(folder, callback){
 				// is.pipe(os);
 			 //    fs.unlinkSync(fname.Path);
 
-			    mv(fname.Path, outPutFolder+ '/' +fname.Name, function(err) {
+/*			    mv(fname.Path, outPutFolder+ '/' +fname.Name, function(err) {
 				  // done. it tried fs.rename first, and then falls back to
 				  // piping the source file to the dest file and then unlinking
 				  // the source file.
-				});
+				});*/
 
 			}
 			callback();
