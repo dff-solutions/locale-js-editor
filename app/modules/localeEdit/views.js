@@ -24,7 +24,32 @@ function(app, LocaleEdit,  Backbone) {
   Views.EditFilter = Backbone.View.extend({
         events: {
       "keyup #keySearchTask" : "KeySearch",
+      "click #nextPage" : "NextPage",
+      "click #prevPage" : "PrevPage",
+      "click #gotoStart" : "goToStart",
+      "click #gotoEnd" : "goToEnd"
     },
+
+    goToStart: function(e){
+      mediator.Publish('goToStart');
+        return this;
+    },    
+
+    goToEnd: function(e){
+      mediator.Publish('goToEnd');
+        return this;
+    },   
+
+    NextPage: function(e){
+      mediator.Publish('nextpage');
+        return this;
+    },    
+
+    PrevPage: function(e){
+      mediator.Publish('prevpage');
+        return this;
+    },    
+
     KeySearch: function(e){
       var keySearchterm = $("#keySearchTask").val();
       mediator.Publish('keySearch', keySearchterm);
@@ -103,8 +128,6 @@ Views.EditList = Backbone.View.extend({
     search: function(term){
       var collToUse = this.wholeCollecxtion || this.collection;
       this.renderList(collToUse.search(term));
-
-
     },  
     save: function() {          
         //localStorage.setItem(this.name, JSON.stringify(this.data)); 
@@ -122,27 +145,53 @@ Views.EditList = Backbone.View.extend({
 
     beforeRender: function() {
 
-      var max = 100;
       var count = 0;
+      var start = (this.currentPage * this.pageSize) - this.pageSize;
+      var index = 0;
       this.collection.each(function(locale) {
-        count++;
-        //if(count < max) {
+        index +=1; 
+        if(index >= start && count <= this.pageSize ) {
+          count +=1;
           this.insertView("div.localelistitems", new Views.EditItem({
             model: locale
           }));
-        //}
+        }
       }, this);
     },
 
     cleanup: function() {
       //this.collection.off(null, null, this);
     },
-
+    prevPage: function(){
+      if(this.currentPage == 0 ) {
+        return;
+      };
+      this.currentPage -= 1;
+      this.render();
+    },    
+    nextPage: function(){
+      this.currentPage += 1;
+      this.render();      
+    },
+    goToStart: function(){
+      this.currentPage = 1;
+      this.render();      
+    },
+    goToEnd: function(){
+      this.currentPage = (this.collection.length / this.pageSize) +1;
+      this.render();      
+    },
     initialize: function() {
       this.collection.on("reset", this.render, this);
-
       mediator.Subscribe('keySearch', this.search, {}, this)
+      mediator.Subscribe('nextpage', this.nextPage, {}, this)      
+      mediator.Subscribe('prevpage', this.prevPage, {}, this)      
 
+      mediator.Subscribe('goToStart', this.goToStart, {}, this)      
+      mediator.Subscribe('goToEnd', this.goToEnd, {}, this)            
+      
+      this.pageSize = 50;
+      this.currentPage = 1;
     }    
 
   });  
