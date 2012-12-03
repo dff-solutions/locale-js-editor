@@ -136,7 +136,8 @@ Views.EditList = Backbone.View.extend({
     },
 
     events: {
-      "click #SaveBtn" : "save"
+      "click #SaveBtn" : "save",
+      "click #ResetBtn" : "reload"
       //,
       //"change #taskSorting":"sorts"
     },
@@ -177,28 +178,31 @@ Views.EditList = Backbone.View.extend({
     cleanup: function() {
       //this.collection.off(null, null, this);
     },
+    reload: function(){
+      this.collection.reset();
+      this.collection.fetch();
+      this.goToPage(1);
+    },
+    goToPage: function(page) {
+      this.currentPage = page;
+      mediator.Publish('pageChanged', this.currentPage);
+      this.render();
+    },
     prevPage: function(){
       if(this.currentPage == 0 ) {
         return;
       };
-      this.currentPage -= 1;
-      mediator.Publish('pageChanged', this.currentPage);
-      this.render();
+
+      this.goToPage(this.currentPage -= 1);
     },    
     nextPage: function(){
-      this.currentPage += 1;
-      mediator.Publish('pageChanged', this.currentPage);      
-      this.render();      
+      this.goToPage(this.currentPage += 1);
     },
     goToStart: function(){
-      this.currentPage = 1;
-      mediator.Publish('pageChanged', this.currentPage);      
-      this.render();      
+      this.goToPage(1);   
     },
     goToEnd: function(){
-      this.currentPage = (this.collection.length / this.pageSize) +1;
-      mediator.Publish('pageChanged', this.currentPage);      
-      this.render();      
+      this.goToPage((this.collection.length / this.pageSize) +1);
     },
     initialize: function() {
       this.collection.on("reset", this.render, this);
