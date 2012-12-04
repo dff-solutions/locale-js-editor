@@ -27,7 +27,8 @@ function(app, LocaleEdit,  Backbone) {
       "click #nextPage" : "NextPage",
       "click #prevPage" : "PrevPage",
       "click #gotoStart" : "goToStart",
-      "click #gotoEnd" : "goToEnd"
+      "click #gotoEnd" : "goToEnd",
+      "change #SelElementsPerPage" : "changeElementsPerPage"
     },
 
     goToStart: function(e){
@@ -39,12 +40,15 @@ function(app, LocaleEdit,  Backbone) {
       mediator.Publish('goToEnd');
         return this;
     },   
-
+    changeElementsPerPage: function(){
+      var elementsPerPage = $("#SelElementsPerPage").val();
+      mediator.Publish('elementsPerPageCHanged', elementsPerPage);
+        return this;      
+    },
     NextPage: function(e){
       mediator.Publish('nextpage');
         return this;
     },    
-
     PrevPage: function(e){
       mediator.Publish('prevpage');
         return this;
@@ -105,7 +109,8 @@ function(app, LocaleEdit,  Backbone) {
     className: 'edit-wrapper-outer',
 
     data: function() {
-      return { model: this.model };
+      return { model: this.model,
+              index: this.model.index };
     },
 
 
@@ -168,6 +173,7 @@ Views.EditList = Backbone.View.extend({
         index +=1; 
         if(index >= start && count <= this.pageSize ) {
           count +=1;
+          locale.index = index;
           this.insertView("div.localelistitems", new Views.EditItem({
             model: locale
           }));
@@ -192,7 +198,6 @@ Views.EditList = Backbone.View.extend({
       if(this.currentPage == 0 ) {
         return;
       };
-
       this.goToPage(this.currentPage -= 1);
     },    
     nextPage: function(){
@@ -204,14 +209,19 @@ Views.EditList = Backbone.View.extend({
     goToEnd: function(){
       this.goToPage((this.collection.length / this.pageSize) +1);
     },
+    changeElementsPerPage:function(pageSize){
+      this.pageSize = Number(pageSize);
+      this.render();
+    },
     initialize: function() {
       this.collection.on("reset", this.render, this);
-      mediator.Subscribe('keySearch', this.search, {}, this)
-      mediator.Subscribe('nextpage', this.nextPage, {}, this)      
-      mediator.Subscribe('prevpage', this.prevPage, {}, this)      
+      mediator.Subscribe('keySearch', this.search, {}, this);
+      mediator.Subscribe('nextpage', this.nextPage, {}, this);      
+      mediator.Subscribe('prevpage', this.prevPage, {}, this) ;     
 
-      mediator.Subscribe('goToStart', this.goToStart, {}, this)      
-      mediator.Subscribe('goToEnd', this.goToEnd, {}, this)            
+      mediator.Subscribe('goToStart', this.goToStart, {}, this);      
+      mediator.Subscribe('goToEnd', this.goToEnd, {}, this)     ;       
+      mediator.Subscribe('elementsPerPageCHanged', this.changeElementsPerPage, {}, this);
       
       this.pageSize = 3;
       this.currentPage = 1;

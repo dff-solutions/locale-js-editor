@@ -9,12 +9,20 @@
 			</div>
 
 			<div class="pull-right filter">
-				<span id="prevPage" class="label">prev</span>
-				<span id="nextPage" class="label">next</span>
+				<span id="prevPage" class="label">< prev</span>
+				<span id="nextPage" class="label">next > </span>
+
+				<select id="SelElementsPerPage" class="dropdown">
+					<option value="5">5</option>
+					<option value="10">10</option>
+					<option value="20">20</option>
+					<option value="25">25</option>
+					<option value="50">50</option>
+				</select>
 
 				<span id="gotoStart" class="label">Start</span>
 				<span id="gotoEnd" class="label">Ende</span>		
-				<span class="label current-page"><%= currentpage %></span>		
+				<span class="label current-page">Seite: <%= currentpage %></span>		
 			</div>
 			
 			<div class="clearfix"></div>
