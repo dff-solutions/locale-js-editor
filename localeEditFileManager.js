@@ -82,22 +82,28 @@ exports.GetUserFiles = function(req, res) {
 		for (var i in jsOnlyFiles) {
 			var file = jsOnlyFiles[i];
 			var statsDone = 0;
+			
+			var stats = fs.statSync(dirName+'/' + file);
+			jsOnlyFilesWithMetaInfo.push({
+				  			Name: file,
+				  			mtime: stats.mtime,
+				  			size: stats.size
+				  		});
 
-			fs.stat(dirName+'/' + file, function(err, stats){
+			// fs.stat(dirName+'/' + file, function(err, stats){
 
-				jsOnlyFilesWithMetaInfo.push({
-					  			Name: file,
-					  			mtime: stats.mtime,
-					  			size: stats.size
-					  		});
-				statsDone +=1;
-				if(statsDone === jsOnlyFiles.length){
-					doResponse();
-				}
-			});
-
-
+			// 	jsOnlyFilesWithMetaInfo.push({
+			// 		  			Name: file,
+			// 		  			mtime: stats.mtime,
+			// 		  			size: stats.size
+			// 		  		});
+			// 	statsDone +=1;
+			// 	if(statsDone === jsOnlyFiles.length){
+			// 		doResponse();
+			// 	}
+			// });
 		}
+		doResponse();		
 	});
 };
 

@@ -8,11 +8,17 @@ var connect = require('connect')
     , filemanager = require('./localeEditFileManager')
     , passport = require('passport')
     , util = require('util')
+    , flash = require('connect-flash')
     , LocalStrategy = require('passport-local').Strategy;    
 
 var users = [
-    { id: 1, username: 'admin', password: 'mclaren', email: 'bob@example.com' }
-  , { id: 2, username: 'stephan', password: 'mclaren', email: 'joe@example.com' }
+    { id: 1, username: 'admin', password: 'mclaren', email: 'bob@example.com' },
+    { id: 2, username: 'ralf', password: 'mclaren', email: 'bob@example.com' },
+    { id: 3, username: 'felix', password: 'mclaren', email: 'bob@example.com' },
+    { id: 4, username: 'arne', password: 'mclaren', email: 'bob@example.com' },
+    { id: 5, username: 'torben', password: 'mclaren', email: 'bob@example.com' },
+    { id: 6, username: 'björn', password: 'mclaren', email: 'bob@example.com' },
+    { id: 7, username: 'stephan', password: 'mclaren', email: 'joe@example.com' }
 ];
 
 function findById(id, fn) {
@@ -73,7 +79,7 @@ passport.use(new LocalStrategy(
       })
     });
   }
-));
+)); 
 
 
 
@@ -92,6 +98,7 @@ app.configure(function(){
   // persistent login sessions (recommended).
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use(flash());  
   app.use(app.router);
   app.use(express.static(__dirname + '/../../public'));
   app.use(express.errorHandler({ 
@@ -233,7 +240,7 @@ function staticRequest (req, res){
 
 
 app.get('/login', function(req, res){
-  res.render('login', { user: req.user, message: '' });
+  res.render('login', { user: req.user, message: 'Login' });
 });
 
 app.post('/upload', uploadHandler);
