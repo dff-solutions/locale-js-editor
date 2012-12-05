@@ -240,7 +240,7 @@ function staticRequest (req, res){
 
 
 app.get('/login', function(req, res){
-  res.render('login', { user: req.user, message: 'Login' });
+  res.render('login', { user: req.user, message: req.flash().error });
 });
 
 app.post('/upload', uploadHandler);
@@ -283,7 +283,7 @@ function uploadHandler (req , res){
 //
 //   curl -v -d "username=bob&password=secret" http://127.0.0.1:3000/login
 app.post('/login', express.bodyParser(),
-  passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),
+  passport.authenticate('local', { failureRedirect: '/index', failureFlash: true }),
   function(req, res) {
     res.redirect('/');
   });
