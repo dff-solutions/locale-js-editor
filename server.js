@@ -122,9 +122,9 @@ app.listen( port );
  
 
 app.get('/', ensureAuthenticated, indexRequest);
-app.get('/index', indexRequest);
-app.get('/edit', indexRequest);
-app.get('/overview', indexRequest);
+app.get('/index', ensureAuthenticated, indexRequest);
+app.get('/edit', ensureAuthenticated, indexRequest);
+app.get('/overview', ensureAuthenticated, indexRequest);
 
 app.get('/upload', function indexRequest (req, res){
       res.writeHead(200, {'Content-Type': 'text/html'});
