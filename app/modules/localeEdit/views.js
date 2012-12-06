@@ -41,7 +41,9 @@ function(app, LocaleEdit,  Backbone) {
         return this;
     },   
     changeElementsPerPage: function(){
+
       var elementsPerPage = $("#SelElementsPerPage").val();
+      this.elementsPerPage = elementsPerPage;
       mediator.Publish('elementsPerPageCHanged', elementsPerPage);
         return this;      
     },
@@ -61,15 +63,27 @@ function(app, LocaleEdit,  Backbone) {
     },
     pageChanged : function(page){
       this.currentPage = page;
+
       this.render();
+            $('#SelElementsPerPage option:selected').removeAttr('selected');
+      var currentSelected = this.elementsPerPage;
+      $("#SelElementsPerPage option").filter(function() {
+        return $(this).val() == currentSelected; 
+      }).attr('selected', true);
+
+      $('#SelElementsPerPage').val(this.elementsPerPage);
     },
     data: function() {
       return {
-        currentpage: this.currentPage
+        currentpage: this.currentPage,
+        elementsPerPage: this.elementsPerPage
       };
     },
     initialize: function(){
       this.currentPage = 1;
+
+      this.elementsPerPage = 5;
+      console.log('filter view elementsPerPage : '  + this.elementsPerPage);
       mediator.Subscribe('pageChanged', this.pageChanged, {}, this)
 
     },
@@ -169,9 +183,11 @@ Views.EditList = Backbone.View.extend({
       var count = 0;
       var start = (this.currentPage * this.pageSize) - this.pageSize;
       var index = 0;
+        console.log('rendering with page size :' + this.pageSize);
       this.collection.each(function(locale) {
         index +=1; 
-        if(index >= start && count <= this.pageSize ) {
+
+        if(index > start && count < this.pageSize ) {
           count +=1;
           locale.index = index;
           this.insertView("div.localelistitems", new Views.EditItem({
@@ -210,6 +226,7 @@ Views.EditList = Backbone.View.extend({
       this.goToPage((this.collection.length / this.pageSize) +1);
     },
     changeElementsPerPage:function(pageSize){
+      console.log('setting  page size to:' + Number(pageSize));
       this.pageSize = Number(pageSize);
       this.render();
     },
@@ -223,7 +240,7 @@ Views.EditList = Backbone.View.extend({
       mediator.Subscribe('goToEnd', this.goToEnd, {}, this)     ;       
       mediator.Subscribe('elementsPerPageCHanged', this.changeElementsPerPage, {}, this);
       
-      this.pageSize = 3;
+      this.pageSize = 5;
       this.currentPage = 1;
     }    
 
