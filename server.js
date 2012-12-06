@@ -121,7 +121,7 @@ app.listen( port );
 /////// ADD ALL YOUR ROUTES HERE  /////////
  
 
-app.get('/', indexRequest);
+app.get('/', ensureAuthenticated, indexRequest);
 app.get('/index', indexRequest);
 app.get('/edit', indexRequest);
 app.get('/overview', indexRequest);
