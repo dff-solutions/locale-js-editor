@@ -217,13 +217,17 @@ Views.EditList = Backbone.View.extend({
       this.goToPage(this.currentPage -= 1);
     },    
     nextPage: function(){
+      if( (this.currentPage + 1) > (Math.round(this.collection.length / this.pageSize) +1)  )
+      {
+        return;
+      }
       this.goToPage(this.currentPage += 1);
     },
     goToStart: function(){
       this.goToPage(1);   
     },
     goToEnd: function(){
-      this.goToPage((this.collection.length / this.pageSize) +1);
+      this.goToPage(Math.round(this.collection.length / this.pageSize) +1 );
     },
     changeElementsPerPage:function(pageSize){
       console.log('setting  page size to:' + Number(pageSize));
