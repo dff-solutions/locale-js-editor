@@ -3,9 +3,9 @@
 		<div class="row" style="padding: 0 0 0 40px;"> 
 
 			<div class="pull-left">
-				<input id="keySearchTask" class="input-medium" type="text"  placeholder="KEY" value='<%= keySearchterm  %>'></input>
-				<input class="input-medium" type="text"  placeholder="LANGUAGE"></input>
-				<input class="input-medium" type="text"  placeholder="VALUE"></input>
+				<input id="keySearchTask" disabled class="input-medium" type="text"  placeholder="KEY" value='<%= keySearchterm  %>'></input>
+				<input class="input-medium" disabled type="text"  placeholder="LANGUAGE"></input>
+				<input class="input-medium" disabled type="text"  placeholder="VALUE"></input>
 			</div>
 
 			<div class="pull-right filter">
@@ -23,6 +23,7 @@
 				<span id="gotoStart" class="label">Start</span>
 				<span id="gotoEnd" class="label">Ende</span>		
 				<span class="label current-page">Seite: <%= currentpage %></span>		
+				<span class="label current-page">Locale Edit Key Count: <%= keyCount %></span>				
 			</div>
 			
 			<div class="clearfix"></div>

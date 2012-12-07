@@ -65,7 +65,8 @@ function(app, LocaleEdit,  Backbone) {
       this.currentPage = page;
 
       this.render();
-            $('#SelElementsPerPage option:selected').removeAttr('selected');
+      
+      $('#SelElementsPerPage option:selected').removeAttr('selected');
       var currentSelected = this.elementsPerPage;
       $("#SelElementsPerPage option").filter(function() {
         return $(this).val() == currentSelected; 
@@ -73,19 +74,24 @@ function(app, LocaleEdit,  Backbone) {
 
       $('#SelElementsPerPage').val(this.elementsPerPage);
     },
+    keyCountChanged: function(count){
+      this.keyCount = count;
+      this.render();
+    },
     data: function() {
       return {
         currentpage: this.currentPage,
-        elementsPerPage: this.elementsPerPage
+        elementsPerPage: this.elementsPerPage,
+        keyCount : this.keyCount
       };
     },
     initialize: function(){
       this.currentPage = 1;
-
       this.elementsPerPage = 5;
-      console.log('filter view elementsPerPage : '  + this.elementsPerPage);
+      this.keyCountChanged = 0;
       mediator.Subscribe('pageChanged', this.pageChanged, {}, this)
-
+      mediator.Subscribe('localeKeyCountChanged', this.keyCountChanged, {}, this)
+      
     },
     template: 'app/templates/localeedit/filter',
     manage: true
@@ -183,7 +189,7 @@ Views.EditList = Backbone.View.extend({
       var count = 0;
       var start = (this.currentPage * this.pageSize) - this.pageSize;
       var index = 0;
-        console.log('rendering with page size :' + this.pageSize);
+
       this.collection.each(function(locale) {
         index +=1; 
 
@@ -230,7 +236,7 @@ Views.EditList = Backbone.View.extend({
       this.goToPage(Math.round(this.collection.length / this.pageSize) +1 );
     },
     changeElementsPerPage:function(pageSize){
-      console.log('setting  page size to:' + Number(pageSize));
+
       this.pageSize = Number(pageSize);
       this.render();
     },
@@ -244,6 +250,11 @@ Views.EditList = Backbone.View.extend({
       mediator.Subscribe('goToEnd', this.goToEnd, {}, this)     ;       
       mediator.Subscribe('elementsPerPageCHanged', this.changeElementsPerPage, {}, this);
       
+      this.collection.on("reset", function(){
+        mediator.Publish('localeKeyCountChanged', this.collection.length);  
+      }, this);      
+      
+
       this.pageSize = 5;
       this.currentPage = 1;
     }    
