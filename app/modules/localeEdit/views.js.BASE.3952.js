@@ -65,8 +65,7 @@ function(app, LocaleEdit,  Backbone) {
       this.currentPage = page;
 
       this.render();
-      
-      $('#SelElementsPerPage option:selected').removeAttr('selected');
+            $('#SelElementsPerPage option:selected').removeAttr('selected');
       var currentSelected = this.elementsPerPage;
       $("#SelElementsPerPage option").filter(function() {
         return $(this).val() == currentSelected; 
@@ -74,24 +73,19 @@ function(app, LocaleEdit,  Backbone) {
 
       $('#SelElementsPerPage').val(this.elementsPerPage);
     },
-    keyCountChanged: function(count){
-      this.keyCount = count;
-      this.render();
-    },
     data: function() {
       return {
         currentpage: this.currentPage,
-        elementsPerPage: this.elementsPerPage,
-        keyCount : this.keyCount
+        elementsPerPage: this.elementsPerPage
       };
     },
     initialize: function(){
       this.currentPage = 1;
+
       this.elementsPerPage = 5;
-      this.keyCountChanged = 0;
+      console.log('filter view elementsPerPage : '  + this.elementsPerPage);
       mediator.Subscribe('pageChanged', this.pageChanged, {}, this)
-      mediator.Subscribe('localeKeyCountChanged', this.keyCountChanged, {}, this)
-      
+
     },
     template: 'app/templates/localeedit/filter',
     manage: true
@@ -111,7 +105,6 @@ function(app, LocaleEdit,  Backbone) {
     translationChanged: function(ev) {
       this.model.Value = $(ev.target).val();
       this.render();
-      mediator.Publish('modelChanged', this.model);      
     },    
 
 
@@ -167,7 +160,7 @@ Views.EditList = Backbone.View.extend({
       //,
       //"change #taskSorting":"sorts"
     },
-    keySearch: function(term){
+    search: function(term){
       var collToUse = this.wholeCollecxtion || this.collection;
       this.renderList(collToUse.search(term));
     },  
@@ -190,7 +183,7 @@ Views.EditList = Backbone.View.extend({
       var count = 0;
       var start = (this.currentPage * this.pageSize) - this.pageSize;
       var index = 0;
-
+        console.log('rendering with page size :' + this.pageSize);
       this.collection.each(function(locale) {
         index +=1; 
 
@@ -237,33 +230,20 @@ Views.EditList = Backbone.View.extend({
       this.goToPage(Math.round(this.collection.length / this.pageSize) +1 );
     },
     changeElementsPerPage:function(pageSize){
-
+      console.log('setting  page size to:' + Number(pageSize));
       this.pageSize = Number(pageSize);
       this.render();
     },
-    syncFilteredWithWholeCollection: function(model){
-        console.log(model);
-    },
     initialize: function() {
       this.collection.on("reset", this.render, this);
-      
-      mediator.Subscribe('keySearch', this.keySearch, {}, this);
+      mediator.Subscribe('keySearch', this.search, {}, this);
       mediator.Subscribe('nextpage', this.nextPage, {}, this);      
       mediator.Subscribe('prevpage', this.prevPage, {}, this) ;     
 
       mediator.Subscribe('goToStart', this.goToStart, {}, this);      
       mediator.Subscribe('goToEnd', this.goToEnd, {}, this)     ;       
       mediator.Subscribe('elementsPerPageCHanged', this.changeElementsPerPage, {}, this);
-      mediator.Subscribe('modelChanged', this.syncFilteredWithWholeCollection, {}, this);
       
-<<<<<<< Updated upstream
-      this.collection.on("reset", function(){
-        mediator.Publish('localeKeyCountChanged', this.collection.length);  
-      }, this);      
-      
-=======
->>>>>>> Stashed changes
-
       this.pageSize = 5;
       this.currentPage = 1;
     }    

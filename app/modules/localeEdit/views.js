@@ -65,8 +65,7 @@ function(app, LocaleEdit,  Backbone) {
       this.currentPage = page;
 
       this.render();
-      
-      $('#SelElementsPerPage option:selected').removeAttr('selected');
+            $('#SelElementsPerPage option:selected').removeAttr('selected');
       var currentSelected = this.elementsPerPage;
       $("#SelElementsPerPage option").filter(function() {
         return $(this).val() == currentSelected; 
@@ -74,24 +73,19 @@ function(app, LocaleEdit,  Backbone) {
 
       $('#SelElementsPerPage').val(this.elementsPerPage);
     },
-    keyCountChanged: function(count){
-      this.keyCount = count;
-      this.render();
-    },
     data: function() {
       return {
         currentpage: this.currentPage,
-        elementsPerPage: this.elementsPerPage,
-        keyCount : this.keyCount
+        elementsPerPage: this.elementsPerPage
       };
     },
     initialize: function(){
       this.currentPage = 1;
+
       this.elementsPerPage = 5;
-      this.keyCountChanged = 0;
+      console.log('filter view elementsPerPage : '  + this.elementsPerPage);
       mediator.Subscribe('pageChanged', this.pageChanged, {}, this)
-      mediator.Subscribe('localeKeyCountChanged', this.keyCountChanged, {}, this)
-      
+
     },
     template: 'app/templates/localeedit/filter',
     manage: true
@@ -111,6 +105,8 @@ function(app, LocaleEdit,  Backbone) {
     translationChanged: function(ev) {
       this.model.Value = $(ev.target).val();
       this.render();
+      mediator.Publish('modelChanged', this.model);      
+
     },    
 
 
@@ -136,10 +132,11 @@ function(app, LocaleEdit,  Backbone) {
 
     beforeRender: function() {
       var items = this.model.get('LocaleValues');
-
       for (var i = 0; i < items.length; i++) {
+        items[i].Key = this.model.get('LocaleKey');
         this.insertView("ul.locales", new Views.EditKeyValueItem({
           model: items[i]
+
         }));
       }
 
@@ -172,7 +169,8 @@ Views.EditList = Backbone.View.extend({
     },  
     save: function() {          
         //localStorage.setItem(this.name, JSON.stringify(this.data)); 
-        LocaleEdit.SaveLocales(this.collection);
+        var collToUse = this.wholeCollecxtion || this.collection;
+        LocaleEdit.SaveLocales(collToUse);
     },
     renderList : function(filteredCollection){
 
@@ -189,7 +187,7 @@ Views.EditList = Backbone.View.extend({
       var count = 0;
       var start = (this.currentPage * this.pageSize) - this.pageSize;
       var index = 0;
-
+        console.log('rendering with page size :' + this.pageSize);
       this.collection.each(function(locale) {
         index +=1; 
 
@@ -236,9 +234,26 @@ Views.EditList = Backbone.View.extend({
       this.goToPage(Math.round(this.collection.length / this.pageSize) +1 );
     },
     changeElementsPerPage:function(pageSize){
-
+      console.log('setting  page size to:' + Number(pageSize));
       this.pageSize = Number(pageSize);
       this.render();
+    },
+    syncFilteredWithWholeCollection: function(model){
+        
+      for (var obj in this.wholeCollecxtion.models) {
+          
+          var currentModel = this.wholeCollecxtion.models[obj];
+
+          if(this.wholeCollecxtion.models[obj].attributes.LocaleKey ===  model.Key ){
+              for (var langv in this.wholeCollecxtion.models[obj].attributes.LocaleValues) {
+
+                  if(this.wholeCollecxtion.models[obj].attributes.LocaleValues[langv].Language ===  model.Language ){
+                      this.wholeCollecxtion.models[obj].attributes.LocaleValues[langv].Value = model.Value;
+                  }
+              }
+          }
+      }
+
     },
     initialize: function() {
       this.collection.on("reset", this.render, this);
@@ -249,12 +264,8 @@ Views.EditList = Backbone.View.extend({
       mediator.Subscribe('goToStart', this.goToStart, {}, this);      
       mediator.Subscribe('goToEnd', this.goToEnd, {}, this)     ;       
       mediator.Subscribe('elementsPerPageCHanged', this.changeElementsPerPage, {}, this);
+      mediator.Subscribe('modelChanged', this.syncFilteredWithWholeCollection, {}, this);
       
-      this.collection.on("reset", function(){
-        mediator.Publish('localeKeyCountChanged', this.collection.length);  
-      }, this);      
-      
-
       this.pageSize = 5;
       this.currentPage = 1;
     }    
