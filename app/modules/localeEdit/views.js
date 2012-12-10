@@ -24,6 +24,10 @@ function(app, LocaleEdit,  Backbone) {
   Views.EditFilter = Backbone.View.extend({
         events: {
       "keyup #keySearchTask" : "KeySearch",
+      "keyup #langSearchTask" : "LangSearch",
+      "keyup #valueSearchTask" : "ValueSearch",
+      
+
       "click #nextPage" : "NextPage",
       "click #prevPage" : "PrevPage",
       "click #gotoStart" : "goToStart",
@@ -47,6 +51,10 @@ function(app, LocaleEdit,  Backbone) {
       mediator.Publish('elementsPerPageCHanged', elementsPerPage);
         return this;      
     },
+    keyCountChanged: function(count) {
+      this.keyCount = count;
+      this.render();
+    },
     NextPage: function(e){
       mediator.Publish('nextpage');
         return this;
@@ -56,6 +64,16 @@ function(app, LocaleEdit,  Backbone) {
         return this;
     },    
 
+    LangSearch: function(e){
+      var keySearchterm = $("#langSearchTask").val();
+      mediator.Publish('langSearch', keySearchterm);
+        return this;
+    },
+    ValueSearch: function(e){
+      var keySearchterm = $("#valueSearchTask").val();
+      mediator.Publish('valueSearch', keySearchterm);
+        return this;
+    },
     KeySearch: function(e){
       var keySearchterm = $("#keySearchTask").val();
       mediator.Publish('keySearch', keySearchterm);
@@ -76,7 +94,8 @@ function(app, LocaleEdit,  Backbone) {
     data: function() {
       return {
         currentpage: this.currentPage,
-        elementsPerPage: this.elementsPerPage
+        elementsPerPage: this.elementsPerPage,
+        keyCount: this.keyCount
       };
     },
     initialize: function(){
@@ -85,7 +104,8 @@ function(app, LocaleEdit,  Backbone) {
       this.elementsPerPage = 5;
       console.log('filter view elementsPerPage : '  + this.elementsPerPage);
       mediator.Subscribe('pageChanged', this.pageChanged, {}, this)
-
+      mediator.Subscribe('localeKeyCountChanged', this.keyCountChanged, {}, this)
+      
     },
     template: 'app/templates/localeedit/filter',
     manage: true
@@ -163,9 +183,17 @@ Views.EditList = Backbone.View.extend({
       //,
       //"change #taskSorting":"sorts"
     },
-    search: function(term){
+    keySearch: function(term){
       var collToUse = this.wholeCollecxtion || this.collection;
-      this.renderList(collToUse.search(term));
+      this.renderList(collToUse.keySearch(term));
+    },  
+    langSearch: function(term){
+      var collToUse = this.wholeCollecxtion || this.collection;
+      this.renderList(collToUse.langSearch(term));
+    },  
+    valueSearch: function(term){
+      var collToUse = this.wholeCollecxtion || this.collection;
+      this.renderList(collToUse.valueSearch(term));
     },  
     save: function() {          
         //localStorage.setItem(this.name, JSON.stringify(this.data)); 
@@ -257,7 +285,9 @@ Views.EditList = Backbone.View.extend({
     },
     initialize: function() {
       this.collection.on("reset", this.render, this);
-      mediator.Subscribe('keySearch', this.search, {}, this);
+      mediator.Subscribe('keySearch', this.keySearch, {}, this);
+      mediator.Subscribe('langSearch', this.langSearch, {}, this);
+      mediator.Subscribe('valueSearch', this.valueSearch, {}, this);
       mediator.Subscribe('nextpage', this.nextPage, {}, this);      
       mediator.Subscribe('prevpage', this.prevPage, {}, this) ;     
 
@@ -265,7 +295,13 @@ Views.EditList = Backbone.View.extend({
       mediator.Subscribe('goToEnd', this.goToEnd, {}, this)     ;       
       mediator.Subscribe('elementsPerPageCHanged', this.changeElementsPerPage, {}, this);
       mediator.Subscribe('modelChanged', this.syncFilteredWithWholeCollection, {}, this);
+
       
+      this.collection.on("reset", function(){
+        mediator.Publish('localeKeyCountChanged', this.collection.length);  
+      }, this);      
+
+
       this.pageSize = 5;
       this.currentPage = 1;
     }    

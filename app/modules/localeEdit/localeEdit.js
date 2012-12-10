@@ -55,12 +55,40 @@ function(app, jquery, Views ) {
 
       return resp;
     },
-    search : function(letters){
+    keySearch : function(letters){
         if(letters == "") return this;
      
         var pattern = new RegExp(letters,"gi");
         return _(this.filter(function(data) {
             return pattern.test(data.get("LocaleKey"));
+        }));
+    },
+    valueSearch : function(letters){
+        if(letters == "") return this;
+     
+        var pattern = new RegExp(letters,"gi");
+        return _(this.filter(function(data) {
+            var values = data.get("LocaleValues");
+            var found = false;
+            for ( var o in values) {
+              var current = values[o];
+              found = found || pattern.test(current.Value); 
+            }
+            return found;
+        }));
+    },
+    langSearch : function(letters){
+        if(letters == "") return this;
+     
+        var pattern = new RegExp(letters,"gi");
+        return _(this.filter(function(data) {
+            var values = data.get("LocaleValues");
+            var found = false;
+            for ( var o in values) {
+              var current = values[o];
+              found = found || pattern.test(current.Language); 
+            }
+            return found;
         }));
     },
     comparator: function(item) {
