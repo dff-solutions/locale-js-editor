@@ -65,18 +65,20 @@ function(app, LocaleEdit,  Backbone) {
     },    
 
     LangSearch: function(e){
-      var keySearchterm = $("#langSearchTask").val();
-      mediator.Publish('langSearch', keySearchterm);
+      this.langSearchterm = $("#langSearchTask").val();
+
+      mediator.Publish('langSearch', this.langSearchterm);
         return this;
     },
     ValueSearch: function(e){
-      var keySearchterm = $("#valueSearchTask").val();
-      mediator.Publish('valueSearch', keySearchterm);
+      this.valueSearchterm = $("#valueSearchTask").val();
+      mediator.Publish('valueSearch', this.valueSearchterm);
         return this;
     },
     KeySearch: function(e){
-      var keySearchterm = $("#keySearchTask").val();
-      mediator.Publish('keySearch', keySearchterm);
+      this.keySearchterm = $("#keySearchTask").val();
+
+      mediator.Publish('keySearch', this.keySearchterm);
         return this;
     },
     pageChanged : function(page){
@@ -90,12 +92,17 @@ function(app, LocaleEdit,  Backbone) {
       }).attr('selected', true);
 
       $('#SelElementsPerPage').val(this.elementsPerPage);
+
+
     },
     data: function() {
       return {
         currentpage: this.currentPage,
         elementsPerPage: this.elementsPerPage,
-        keyCount: this.keyCount
+        keyCount: this.keyCount,
+        keySearchterm: this.keySearchterm,
+        valueSearchterm: this.valueSearchterm,
+        langSearchterm: this.langSearchterm
       };
     },
     initialize: function(){
