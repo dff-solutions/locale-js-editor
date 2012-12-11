@@ -12,8 +12,6 @@ var fs = require('fs')
     intranetLocaleContext = vm.createContext(sandbox);
 
 
-
-
 function getUserFolder(req){
 
     var dirName =  __dirname +'/files/user_' + req.session.passport.user;
@@ -36,8 +34,6 @@ function getUserFolder(req){
         })
 	}
 };
-
-
 
 exports.GetUserFolderName = function(req) {
 
@@ -89,19 +85,6 @@ exports.GetUserFiles = function(req, res) {
 				  			mtime: stats.mtime,
 				  			size: stats.size
 				  		});
-
-			// fs.stat(dirName+'/' + file, function(err, stats){
-
-			// 	jsOnlyFilesWithMetaInfo.push({
-			// 		  			Name: file,
-			// 		  			mtime: stats.mtime,
-			// 		  			size: stats.size
-			// 		  		});
-			// 	statsDone +=1;
-			// 	if(statsDone === jsOnlyFiles.length){
-			// 		doResponse();
-			// 	}
-			// });
 		}
 		doResponse();		
 	});
@@ -143,7 +126,6 @@ exports.DeleteUserFile  = function(req, res) {
 		res.end();	  	
 	  }
 	});
-
 };
 
 function parseLocaleJs (array) {
@@ -172,27 +154,6 @@ function parseLocaleJs (array) {
 	}
 };
 
-function parseLocaleJs (array) {
-	var nameSpace = '';
-	var entries = [];
-	var line = '';
-	for(i in array) {
-		if(i !== 0 ) {
-		    console.log(array[i]);
-		    line = array[i];
-
-		    if(i == 1 ) {
-		   		nameSpace = line.split('=')[0];
-		    }else{
-		    	entries.push(line);
-		    }
-		}
-	}
-	return {
-		NameSpace : nameSpace,
-		Entries : entries
-	}
-};
 
 function toMultiLocaleItem (Locales){
 
@@ -321,7 +282,7 @@ function saveLocaleJsonToFiles (data, dirName, callback){
 
 	var locales = {};
 
-	var partialFileName = "INTRANET.LOCALE.";
+	var partialFileName = "Intranet.Locale.";
 
 	for( var i = 0 ; i < data.length; i++){
 		var obj = data[i];
@@ -357,24 +318,24 @@ function saveLocaleJsonToFiles (data, dirName, callback){
 					// Wenn der String single qoutes innerhalb hat, wert in double qoutes einpassen
 					// ansonsten singleqoutes
 					if(hasSingleQuoteInside){
-						outputString += k + ": \"" + localeValue.replace("\n","\\n") + "\",\r\n";									
+						outputString += "    " + k + ": \"" + localeValue.replace("\n","\\n") + "\",\r\n";									
 					}else{
-						outputString += k + ": '" + localeValue.replace("\n","\\n") + "',\r\n";									
+						outputString += "    " + k + ": '" + localeValue.replace("\n","\\n") + "',\r\n";									
 					}
 
 				}else{
 					// wir haben eine function! nicht in qoutes einpassen!!!
-					outputString += k + ": " + localeValue + ",\r\n";			
+					outputString += "    " + k + ": " + localeValue + ",\r\n";			
 				}
 
 			}
 
 			// remove last comma
 			outputString = outputString.substring(0, outputString.length - 3) + "\r\n";
-			outputString += " };";		
+			outputString += "};";		
 
 
-			var filename = dirName + '/'+ partialFileName + lang.toUpperCase() + ".js";
+			var filename = dirName + '/'+ partialFileName + lang + ".js";
 			fs.writeFile(filename, outputString, function(err) {
 			    if(err) {
 			        console.log(err);
@@ -388,12 +349,8 @@ function saveLocaleJsonToFiles (data, dirName, callback){
 
 	// save a backUp
 	moveExistingFilesToBackUpFolder(dirName,procceed);
-
-
-
-
-
 }
+
 exports.GetCurrentWorkingLocales = function(req, res) {
 	var dirName = getUserFolder(req);
 	var locales = [];
@@ -419,83 +376,20 @@ exports.GetCurrentWorkingLocales = function(req, res) {
 
 		    var fileName = fileOnlyNames[i];
 
-
-				fs.readFile(fileName, function handleFile(err, data) {
-						
-						// var ar = data.split('\n');
-						// var part = '';
-						// var key = '';
-
-						// for(var i = 0; i < length; i ++) {
-						// 	var curent = ar[i];
-						// 	var indexofColon = current.indexOf(':');
-						// 	if(indexofColon !== -1) {
-						// 		key = current.substring(0, indexofColon -1 );
-						// 		part = current.substring(indexofColon+1);l
-						// 	}else{
-
-						// 	}
-						// }
-
-						intranetLocaleContext = vm.createContext(sandbox);
-					    vm.runInContext(data, intranetLocaleContext);
-
-					    /*
-					     {DE:{ Key1 : 'Value',
-						       Key2 : 'Value'
-						}}*/		 
-
-						multiLocaleItem = toMultiLocaleItem(intranetLocaleContext.Intranet.Locale);	
-						done += 1;
-
-						if(done == fileOnlyNames.length  ) {
-							res.writeHead(200, { 'Content-Type': 'application/json' });
-							res.write( JSON.stringify(multiLocaleItem) );
-							res.end();
-						}			
-					});
-		}
-	});
-};
-
-exports.GetCurrentWorkingLocalesOld = function(req, res) {
-	var dirName = getUserFolder(req);
-	var locales = [];
-	fs.readdir(dirName, function(err, files){
-
-		var jsOnlyFiles = [];
-
-		for (var i in files) {
-
-		    var fileName = dirName + '/' + files[i];
-			var stats = fs.lstatSync(fileName);
-
-			if (stats.isFile()) {
-				var array = fs.readFileSync(fileName).toString().split("\n");
-
 				fs.readFile(fileName, function handleFile(err, data) {
 
-					    vm.runInContext(data, intranetLocaleContext);
-						console.log(intranetLocaleContext);	
-						console.log(toMultiLocaleItem(intranetLocaleContext.Intranet.Locale));	
-					    	
-					});
+					intranetLocaleContext = vm.createContext(sandbox);
+				    vm.runInContext(data, intranetLocaleContext);
 
-				var l = parseLocaleJs(array);
-				locales.push(l);
+					multiLocaleItem = toMultiLocaleItem(intranetLocaleContext.Intranet.Locale);	
+					done += 1;
 
-			}
-
+					if(done == fileOnlyNames.length  ) {
+						res.writeHead(200, { 'Content-Type': 'application/json' });
+						res.write( JSON.stringify(multiLocaleItem) );
+						res.end();
+					}			
+				});
 		}
-
-         res.writeHead(200, { 'Content-Type': 'application/json' });
-         res.write(
-         	JSON.stringify({
-         						Locales: locales
-         					})
-         		);
-		res.end();
 	});
-
-
 };
