@@ -179,6 +179,8 @@ app.get('/files/*', function(req, res){
 //get a array of uploaded js files which represent the basis for our future work
 app.get('/api/currentfiles', filemanager.GetUserFiles);
 app.get('/api/getCurrentRevisions', filemanager.GetCurrentRevisions);
+app.post('/api/deleteRevisionFolder', express.bodyParser(), filemanager.DeleteRevisionFolder);
+
 //get the locales as json array of locale objects
 app.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales);
 app.post('/api/deleteUserFile',express.bodyParser(), filemanager.DeleteUserFile);

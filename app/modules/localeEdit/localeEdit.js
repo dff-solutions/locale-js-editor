@@ -174,13 +174,13 @@ function(app, jquery, Views ) {
                     }).appendTo($fileWrapper);
                     $btnDelete.html('Löschen');
                     $btnDelete.click(function(){
-                        $.ajax({    url: '/api/deleteUserFile/',
+                        $.ajax({    url: '/api/deleteRevisionFolder/',
                                     type: 'POST',
                                     data: {
-                                      Filename: value.name
+                                      Foldername: value.name
                                     }
                                 }).success(function(data){
-                                    Localeedit.InitFileListUi();
+                                    Localeedit.InitRevisionListUi();
                                 });
                     });
 

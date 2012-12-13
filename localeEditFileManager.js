@@ -90,6 +90,25 @@ exports.GetUserFiles = function(req, res) {
 	});
 };
 
+exports.DeleteRevisionFolder = function(req, res) {
+	var dirName = getUserFolder(req);
+    var folderToDelete = req.body.Foldername;
+
+    
+    fs.unlink(dirName + '/' + folderToDelete, function  (err) {
+	  if (err) {
+	  	//ToDo Error: EISDIR, unlink '/home/stephan/workspaces/locale-js-editor/files/user_1/201211117942_backUp'
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.write(JSON.stringify( { state: 'error'}));
+		res.end();
+	  } else {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.write(JSON.stringify( { state: 'success'}));
+		res.end();	  	
+	  }
+	});  
+};
+
 exports.GetCurrentRevisions = function(req, res) {
 	var dirName = getUserFolder(req);
     console.log('Retrieving UserFiles: ');
