@@ -125,6 +125,7 @@ app.get('/', ensureAuthenticated, indexRequest);
 app.get('/index', ensureAuthenticated, indexRequest);
 app.get('/edit', ensureAuthenticated, indexRequest);
 app.get('/overview', ensureAuthenticated, indexRequest);
+app.get('/revisions', ensureAuthenticated, indexRequest);
 
 app.get('/upload', function indexRequest (req, res){
       res.writeHead(200, {'Content-Type': 'text/html'});
@@ -177,6 +178,7 @@ app.get('/files/*', function(req, res){
 
 //get a array of uploaded js files which represent the basis for our future work
 app.get('/api/currentfiles', filemanager.GetUserFiles);
+app.get('/api/getCurrentRevisions', filemanager.GetCurrentRevisions);
 //get the locales as json array of locale objects
 app.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales);
 app.post('/api/deleteUserFile',express.bodyParser(), filemanager.DeleteUserFile);

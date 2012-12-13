@@ -130,7 +130,70 @@ function(app, jquery, Views ) {
             })
 
   };
+  Localeedit.InitRevisionListUi = function(){
+     $('.revisons-list-wrapper').html('');
+        var $fileListWrapper = $('.revisons-list-wrapper')
+        return $.ajax({
+                url: '/api/getCurrentRevisions'
+            }).success(function(data) {
+                $.each(data,function(index, value){
+                    var $fileWrapper = $('<div>',{
+                        'class': ' well well-large file'
+                    }).appendTo($fileListWrapper);
 
+                    var $text = $('<span>', {
+                        'class' : "label label-info pull-left"
+                    }).appendTo($fileWrapper);
+                    $text.html('Name: ' +  value.name);
+
+                    var $text = $('<span>', {
+                        'class' : "label label-info pull-left"
+                    }).appendTo($fileWrapper);
+                    $text.html('Änderungsdatum: ' +  value.lastChange);
+
+                    var $text = $('<span>', {
+                        'class' : "label label-info pull-left"
+                    }).appendTo($fileWrapper);
+                    $text.html('Größe: ' +  value.size);                    
+
+                  var $btnDownlaod = $('<button>', {
+                        type : "button",
+                        'class' : "pull-right btn btn-primary",
+                         'data-loading-text' : "downloading"
+                    }).appendTo($fileWrapper);
+                    $btnDownlaod.html('Download'); 
+
+                    $btnDownlaod.click(function(){
+                        window.open(value.url, 'Download ' +  value.name);
+                    });
+
+                    var $btnDelete = $('<button>', {
+                        type : "button",
+                        'class' : "pull-right btn btn-primary",
+                         'data-loading-text' : "deleteing"
+                    }).appendTo($fileWrapper);
+                    $btnDelete.html('Löschen');
+                    $btnDelete.click(function(){
+                        $.ajax({    url: '/api/deleteUserFile/',
+                                    type: 'POST',
+                                    data: {
+                                      Filename: value.name
+                                    }
+                                }).success(function(data){
+                                    Localeedit.InitFileListUi();
+                                });
+                    });
+
+                })
+            })
+            .fail(function () {
+                $('<span class="alert alert-error"/>')
+                    .text('file manager currently unavaiable - ' +
+                            new Date())
+                    .appendTo('.revisons-list-wrapper');
+            });
+   
+  };
   Localeedit.InitFileListUi = function() {
         $('.file-list-wrapper').html('');
         var $fileListWrapper = $('.file-list-wrapper')

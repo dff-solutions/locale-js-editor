@@ -90,6 +90,53 @@ exports.GetUserFiles = function(req, res) {
 	});
 };
 
+exports.GetCurrentRevisions = function(req, res) {
+	var dirName = getUserFolder(req);
+    console.log('Retrieving UserFiles: ');
+	fs.readdir(dirName, function(err, files){
+
+
+
+		var dirs = [];
+		var dirsWithMetaInfo = [];		
+
+		var doResponse = function() {
+	        res.writeHead(200, { 'Content-Type': 'application/json' });
+	        res.write(JSON.stringify(
+						        	dirsWithMetaInfo.map(function (file)
+						        	{
+						        		return { url: '/files/user_' + req.session.passport.user + '/' + file.Name,
+						        				 name: file.Name,
+						        				 lastChange: file.mtime,
+						        				 size: file.size,
+						        				 deleteUrl: req.originalUrl +  file }; })
+						        	));
+			res.end();
+		};
+
+		// nur die js Dateien ohne Ordner
+		for (var i in files) {
+		  var file = files[i];
+		  if(file.indexOf('js') ===  -1 ){
+		  		dirs.push(file);
+		  }
+		}
+
+		// anreichern mit meta infos
+		for (var i in dirs) {
+			var dir = dirs[i];
+			var statsDone = 0;
+			
+			var stats = fs.statSync(dirName+'/' + dir);
+			dirsWithMetaInfo.push({
+				  			Name: dir,
+				  			mtime: stats.mtime,
+				  			size: stats.size
+				  		});
+		}
+		doResponse();		
+	});
+};
 
 exports.SaveLocales = function(req, res) {
 

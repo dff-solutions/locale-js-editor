@@ -21,6 +21,11 @@ function(app, LocaleEdit,  Backbone) {
     manage: true
    });
 
+  Views.Revisions = Backbone.View.extend({
+    template: 'app/templates/localeedit/revisions',
+    manage: true
+   });  
+
   Views.EditFilter = Backbone.View.extend({
         events: {
       "keyup #keySearchTask" : "KeySearch",

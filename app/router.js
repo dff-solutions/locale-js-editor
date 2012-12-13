@@ -14,9 +14,23 @@ function(app,LocaleEdit,jquery) {
       "": "index",
       "index": "index",      
       "edit": "edit",            
-      "overview": "overview"
+      "overview": "overview",
+      "revisions" : "revisions"
     },
-    overview: function() {
+    index: function() {
+            jquery('#loadIndicator').show();
+            app.useLayout('main').setViews({
+                    '#stage': new LocaleEdit.Views.Upload()
+             }).render()
+            .done(function(){
+              jquery.when(LocaleEdit.InitUi())
+                    .done(function(){
+                        jquery('ul.nav li').removeClass('active');
+                        jquery('ul.nav a[href="#index"]').parent().addClass('active');              
+                        jquery('#loadIndicator').fadeOut('slow');
+                    });
+            });
+    },    overview: function() {
             jquery('#loadIndicator').show();
             app.useLayout('main').setViews({
 
@@ -32,20 +46,23 @@ function(app,LocaleEdit,jquery) {
                       });
               });  
     },
-    index: function() {
+    revisions: function() {
             jquery('#loadIndicator').show();
             app.useLayout('main').setViews({
-                    '#stage': new LocaleEdit.Views.Upload()
+
+                    '#stage': new LocaleEdit.Views.Revisions()
              }).render()
-            .done(function(){
-              jquery.when(LocaleEdit.InitUi())
-                    .done(function(){
+              .done(function() {
+                  jquery.when(LocaleEdit.InitRevisionListUi())
+                        .done(function(){
+
                         jquery('ul.nav li').removeClass('active');
-                        jquery('ul.nav a[href="#index"]').parent().addClass('active');              
+                        jquery('ul.nav a[href="#revisions"]').parent().addClass('active');                  
                         jquery('#loadIndicator').fadeOut('slow');
-                    });
-            });
+                      });
+              });  
     },
+
     edit: function() {
             jquery('#loadIndicator').show();
             var collection = new LocaleEdit.Collection();
