@@ -95,7 +95,7 @@ exports.DeleteRevisionFolder = function(req, res) {
     var folderToDelete = req.body.Foldername;
 
     
-    fs.unlink(dirName + '/' + folderToDelete, function  (err) {
+    fs.rmdir(dirName + '/' + folderToDelete, function  (err) {
 	  if (err) {
 	  	//ToDo Error: EISDIR, unlink '/home/stephan/workspaces/locale-js-editor/files/user_1/201211117942_backUp'
         res.writeHead(200, { 'Content-Type': 'application/json' });
