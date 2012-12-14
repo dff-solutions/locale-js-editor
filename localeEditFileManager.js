@@ -136,7 +136,7 @@ exports.GetCurrentRevisions = function(req, res) {
 		// nur die js Dateien ohne Ordner
 		for (var i in files) {
 		  var file = files[i];
-		  if(file.indexOf('js') ===  -1 ){
+		  if(file.indexOf('js') ===  -1 && file.indexOf('thumbnail') === -1){
 		  		dirs.push(file);
 		  }
 		}
