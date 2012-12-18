@@ -42,6 +42,8 @@ exports.GetUserFolderName = function(req) {
 	return 'user_' + req.session.passport.user;	
 };
 
+
+
 exports.GetUserFiles = function(req, res) {
 	var dirName = getUserFolder(req);
     console.log('Retrieving UserFiles: ');
@@ -94,19 +96,76 @@ exports.DeleteRevisionFolder = function(req, res) {
 	var dirName = getUserFolder(req);
     var folderToDelete = req.body.Foldername;
 
-    
-    fs.rmdir(dirName + '/' + folderToDelete, function  (err) {
-	  if (err) {
-	  	//ToDo Error: EISDIR, unlink '/home/stephan/workspaces/locale-js-editor/files/user_1/201211117942_backUp'
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.write(JSON.stringify( { state: 'error'}));
-		res.end();
-	  } else {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.write(JSON.stringify( { state: 'success'}));
-		res.end();	  	
-	  }
-	});  
+    var doResponse = function(err){
+		if (err) {
+			res.writeHead(200, { 'Content-Type': 'application/json' });
+			res.write(JSON.stringify( { state: 'error'}));
+			res.end();
+		} else {
+			res.writeHead(200, { 'Content-Type': 'application/json' });
+			res.write(JSON.stringify( { state: 'success'}));
+			res.end();	  	
+		}
+    };
+
+    deleteFolder(dirName + '/' + folderToDelete, doResponse );
+
+};
+
+function deleteAllFilesInFolder(folder, callback) {
+	fs.readdir(folder, function(err, files){
+
+		// nur die js Dateien ohne Ordner
+		var file = null;
+		var done = 0;
+
+		for (var i in files) {
+		  file = files[i];
+
+			var stats = fs.lstatSync(folder + '/' + file);
+
+			if (stats.isFile()) {
+				    fs.unlink(folder + '/' + file, function (err) {
+						if (err) {
+							console.log(err);
+						} else {
+							console.log('deleteAllFilesInFolder ' + folder + '/' + file);
+						}
+						++done;
+						if(done === files.length ) {
+							callback();
+						}
+					});
+			}
+		}
+
+
+	});
+};
+
+function deleteFolder(folder, callback){
+	
+	var procceed = function(){
+		fs.rmdir(folder, function  (err) {
+		  if (err) {
+		  	callback(true);
+		  } else {
+	        callback(false);	  	
+		  }
+		});	
+	}
+
+
+	deleteAllFilesInFolder(folder, procceed);
+
+		
+};
+
+exports.SwitchToRevision = function(req, res) {
+	var dirName = getUserFolder(req);
+	var revisionFolderToSwitchTo = req.body.RevisionFolder;
+	
+
 };
 
 exports.GetCurrentRevisions = function(req, res) {

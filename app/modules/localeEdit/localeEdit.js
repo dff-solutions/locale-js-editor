@@ -156,7 +156,7 @@ function(app, jquery, Views ) {
                     }).appendTo($fileWrapper);
                     $text.html('Größe: ' +  value.size);                    
 
-                  var $btnDownlaod = $('<button>', {
+                    var $btnDownlaod = $('<button>', {
                         type : "button",
                         'class' : "pull-right btn btn-primary",
                          'data-loading-text' : "downloading"
@@ -166,6 +166,26 @@ function(app, jquery, Views ) {
                     $btnDownlaod.click(function(){
                         window.open(value.url, 'Download ' +  value.name);
                     });
+
+                    var $btnSwitchTo = $('<button>', {
+                        type : "button",
+                        'class' : "pull-right btn btn-primary",
+                         'data-loading-text' : "switch to Revison"
+                    }).appendTo($fileWrapper);
+                    $btnSwitchTo.html('Switch To Revison'); 
+
+                    $btnSwitchTo.click(function(){
+                        $.ajax({    url: '/api/switchToRevisionFolder/',
+                                    type: 'POST',
+                                    data: {
+                                      RevisionFolder: value.name
+                                    }
+                                }).success(function(data){
+                                    Localeedit.InitRevisionListUi();
+                                });
+                    });
+
+
 
                     var $btnDelete = $('<button>', {
                         type : "button",

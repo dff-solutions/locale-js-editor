@@ -181,6 +181,9 @@ app.get('/api/currentfiles', filemanager.GetUserFiles);
 app.get('/api/getCurrentRevisions', filemanager.GetCurrentRevisions);
 app.post('/api/deleteRevisionFolder', express.bodyParser(), filemanager.DeleteRevisionFolder);
 
+app.post('/api/switchToRevisionFolder', express.bodyParser(), filemanager.SwitchToRevision);
+
+
 //get the locales as json array of locale objects
 app.get('/api/getworkinglocales', filemanager.GetCurrentWorkingLocales);
 app.post('/api/deleteUserFile',express.bodyParser(), filemanager.DeleteUserFile);
